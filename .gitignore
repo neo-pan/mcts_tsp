@@ -1,0 +1,11 @@
+.vscode/
+all_heatmap/
+**/heatmap/
+**/results/
+nni_results/
+
+*.txt
+*.zip
+*.o
+*.pyc
+test

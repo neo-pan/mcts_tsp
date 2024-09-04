@@ -136,6 +136,16 @@ double Get_Stored_Solution_Double_Distance(int Inst_Index)
     return Stored_Solution_Double_Distance;
 }
 
+double Get_Stored_Solution_Double_Distance()
+{
+	double Stored_Solution_Double_Distance = 0;
+    for(int i=0; i<Virtual_City_Num-1; i++)
+        Stored_Solution_Double_Distance += DoubleDistance[Opt_Solution[i]][Opt_Solution[i+1]];
+
+    Stored_Solution_Double_Distance += DoubleDistance[Opt_Solution[Virtual_City_Num-1]][Opt_Solution[0]];
+    return Stored_Solution_Double_Distance;
+}
+
 //For TSP20-50-100 instances
 // Return the total distance (double) of the solution stored in Struct_Node *All_Node
 double Get_Current_Solution_Double_Distance()

@@ -1,4 +1,6 @@
 .vscode/
+build/
+*.egg-info/
 all_heatmap/
 **/heatmap/
 **/results/
@@ -7,5 +9,6 @@ nni_results/
 *.txt
 *.zip
 *.o
+*.so
 *.pyc
 test

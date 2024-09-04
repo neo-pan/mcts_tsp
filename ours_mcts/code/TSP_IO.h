@@ -78,6 +78,7 @@ int Salesman_Num; // This program was proposed for the multiple TSP. If Salesman
 int Virtual_City_Num;
 double **DoubleDistance;
 Distance_Type **Distance;
+int *Opt_Solution;
 
 double Current_Instance_Begin_Time;
 Distance_Type Current_Instance_Best_Distance;
@@ -132,6 +133,8 @@ void Allocate_Memory(int City_Num)
     for (int i = 0; i < City_Num; i++)
         Distance[i] = new Distance_Type[City_Num];
 
+    Opt_Solution = new int[City_Num];
+
     All_Node = new Struct_Node[City_Num];
     Best_All_Node = new Struct_Node[City_Num];
     Solution = new int[City_Num];
@@ -172,6 +175,8 @@ void Release_Memory(int City_Num)
     for (int i = 0; i < City_Num; i++)
         delete[] Distance[i];
     delete[] Distance;
+
+    delete[] Opt_Solution;
 
     delete[] All_Node;
     delete[] Best_All_Node;

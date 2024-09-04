@@ -54,7 +54,7 @@ bool Improve_By_2Opt_Move()
             Delta = Get_2Opt_Delta(i, Candidate_City);
             if (Delta> 0)
             {
-                cout << "Improving by 2-opt move: " << i << " " << Candidate_City << " Delta: " << Delta << endl;
+                // cout << "Improving by 2-opt move: " << i << " " << Candidate_City << " Delta: " << Delta << endl;
                 Apply_2Opt_Move(i, Candidate_City);
                 If_Improved = true;
                 break;

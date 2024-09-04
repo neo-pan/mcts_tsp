@@ -16,3 +16,17 @@ extend-select = [
   "RUF", # Ruff-specific
   "UP",  # pyupgrade
 ]
+
+[project]
+name = "mcts_tsp"
+version = "0.0.1"
+description = "A python wrapper for MCTS TSP solver"
+readme = "README.md"
+requires-python = ">=3.7"
+license = {file = "LICENSE"}
+authors = [
+  {name = "Xuanhao Pan", email = "xuanhaopan@link.cuhk.edu.cn"},
+]
+
+[project.urls]
+Homepage = "https://github.com/neo-pan/mcts_tsp"

@@ -164,7 +164,7 @@ TSP_Result solve(int city_num, double alpha, double beta, double param_h, double
     return TSP_Result{Concorde_Distance, MCTS_Distance, Gap, Time, py::cast(Solution)};
 }
 
-PYBIND11_MODULE(mcts, m)
+PYBIND11_MODULE(_mcts_cpp, m)
 {
     m.def("solve", &solve, "A function to solve TSP using MCTS",
         py::arg("city_num"),

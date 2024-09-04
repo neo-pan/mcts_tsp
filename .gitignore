@@ -1,4 +1,5 @@
 .vscode/
+__pycache__/
 build/
 *.egg-info/
 all_heatmap/

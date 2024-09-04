@@ -62,7 +62,7 @@ STATIC_LIBS_DIR = -L. ${_COMMON_DIR} -L${NCNN_LIB}  -L${OPENBLAS_LIB}
 #STATIC_LIBS_DIR =  -L. ${OPENCV_3RD_DIR} -L. -L${NCNN_LIB} -L${OPENBLAS_LIB}
 
 #源码目录
-CPP_SRC := $(shell find ./ -name "*.cpp")
+CPP_SRC := $(shell find ./ -name "*.cpp" ! -name "mcts.cpp")
 
 
 

@@ -1,5 +1,6 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/numpy.h>
+#include <pybind11/stl.h>
 #include "TSP_IO.h"
 #include "TSP_Basic_Functions.h"
 #include "TSP_Init.h"
@@ -15,7 +16,7 @@ struct TSP_Result
     double MCTS_Distance;
     double Gap;
     double Time;
-    vector<int> Solution;
+    py::list Solution;  // 改为 py::list
 };
 
 TSP_Result solve(int city_num, double alpha, double beta, double param_h, double param_t,
@@ -160,7 +161,7 @@ TSP_Result solve(int city_num, double alpha, double beta, double param_h, double
 
     Release_Memory(Virtual_City_Num);
 
-    return TSP_Result{Concorde_Distance, MCTS_Distance, Gap, Time, Solution};
+    return TSP_Result{Concorde_Distance, MCTS_Distance, Gap, Time, py::cast(Solution)};
 }
 
 PYBIND11_MODULE(mcts, m)
@@ -188,10 +189,27 @@ PYBIND11_MODULE(mcts, m)
         .def_readonly("Time", &TSP_Result::Time)
         .def_readonly("Solution", &TSP_Result::Solution)
         .def("__repr__", [](const TSP_Result &r) {
+            std::string solution_str = py::str(py::tuple(r.Solution)).cast<std::string>();
             return "TSP_Result(Concorde_Distance=" + std::to_string(r.Concorde_Distance) +
                    ", MCTS_Distance=" + std::to_string(r.MCTS_Distance) +
                    ", Gap=" + std::to_string(r.Gap) +
                    ", Time=" + std::to_string(r.Time) +
-                   ", solution=[...])";
-        });
+                   ", solution=" + solution_str + ")";
+        })
+        .def(py::pickle(
+            [](const TSP_Result &r) { // __getstate__
+                return py::make_tuple(r.Concorde_Distance, r.MCTS_Distance, r.Gap, r.Time, r.Solution);
+            },
+            [](py::tuple t) { // __setstate__
+                if (t.size() != 5)
+                    throw std::runtime_error("Invalid state!");
+                TSP_Result r;
+                r.Concorde_Distance = t[0].cast<double>();
+                r.MCTS_Distance = t[1].cast<double>();
+                r.Gap = t[2].cast<double>();
+                r.Time = t[3].cast<double>();
+                r.Solution = t[4].cast<py::list>();
+                return r;
+            }
+        ));
 }

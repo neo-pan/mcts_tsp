@@ -41,26 +41,23 @@ def get_heatmap_list(config, name, num_nodes, num_instances):
 
 
 def read_concorde_file(config, file_name):
-    # Read the entire file content at once
+    # 读取整个文件内容
     with open(file_name, "r") as file:
-        content = file.read()
-
-    # Split the content into lines
-    lines = content.strip().split('\n')
+        lines = file.readlines()
+    # 将每行分割成坐标和解决方案部分
     assert len(lines) >= config.total_instance_num
+    coords = []
+    opt_sols = []
+    # 将每行分割成坐标和解决方案部分
+    for line in lines:
+        parts = line.split("output")
+        coords.extend([float(x) for x in parts[0].strip().split()])
+        opt_sols.extend([int(x) for x in parts[1].strip().split()])
 
-    # Split each line into coordinates and solution parts
-    parts = [line.split("output") for line in lines]
+    coords = np.array(coords).reshape((config.total_instance_num, num_nodes, 2))
+    opt_sols = np.array(opt_sols).reshape((config.total_instance_num, num_nodes + 1))
 
-    # Process coordinates
-    coords = np.fromstring(' '.join([p[0].strip() for p in parts]), sep=' ')
-    pos = coords.reshape(config.total_instance_num, -1, 2)
-
-    # Process optimal solutions
-    opt_sols = np.fromstring(' '.join([p[1].strip() for p in parts]), sep=' ', dtype=int)
-    opt_sols = opt_sols.reshape(config.total_instance_num, -1)
-
-    return pos, opt_sols
+    return coords, opt_sols
 
 def read_utsp_heatmap(heatmap_file = "1kTraning_TSP500Instance_128.txt", num_of_nodes = 500, topk = 500):
     with open(heatmap_file, "r") as file:
@@ -342,15 +339,13 @@ def mcts(
 
 if __name__ == "__main__":
     config = Config()
-    config.thread_num = 1
-    config.total_instance_num = 1
+    config.thread_num = 128
+    config.total_instance_num = 128
     config.mcts_dir = "ours_mcts"
-    # make_binary(config)
+    make_binary(config)
 
-    num_nodes = 1000
+    num_nodes = 500
     pos, opt_sols = read_concorde_file(config, f"ours_mcts/tsp{num_nodes}_test_concorde.txt")
-    pos = pos[0:1]
-    opt_sols = opt_sols[0:1]
     distance_matrix = np.sqrt(np.sum((pos[:, np.newaxis, :] - pos[:, :, np.newaxis])**2, axis=-1))
     print("Position shape:", pos.shape, "Optimal solutions shape:", opt_sols.shape, "Distance matrix shape:", distance_matrix.shape)
     heatmap_list = get_heatmap_list(config, "difusco", num_nodes, config.total_instance_num)
@@ -369,13 +364,13 @@ if __name__ == "__main__":
     # gaps.append(
     #     mcts(
     #         config,
-    #         heatmap_list[0:1],
-    #         opt_sols[0:1],
-    #         distance_matrix[0:1],
+    #         heatmap_list,
+    #         opt_sols,
+    #         distance_matrix,
     #         # alpha=1,
     #         # beta=50,
     #         # H=2,
-    #         T=100./num_nodes,
+    #         T=10./num_nodes,
     #         # max_candidate_num=5,
     #         # use_heatmap=1,
     #         use_temp_dir=False,  # Set to False for debugging
@@ -387,6 +382,24 @@ if __name__ == "__main__":
 
     import mcts
     start_time = time.time()
-    mcts.solve(10000, 1, 10, 10, 100./num_nodes, 1000, 1, 10, distance_matrix[0], opt_sols[0], heatmap_list[0], debug=True)
+    import multiprocessing
+
+    def run_mcts(args):
+        idx, distance_matrix, opt_sols, heatmap = args
+        return mcts.solve(num_nodes, 1, 10, 10, 50./num_nodes, 1000, 1, 10, distance_matrix, opt_sols[:-1], heatmap, debug=False)
+
+    pool = multiprocessing.Pool(processes=config.thread_num)
+
+    args_list = [(i, distance_matrix[i], opt_sols[i], heatmap_list[i]) for i in range(len(distance_matrix))]
+    results = pool.map(run_mcts, args_list)
+
+    pool.close()
+    pool.join()
+
+    # 处理结果
+    gaps = []
+    for i, result in enumerate(results):
+        gaps.append(result.Gap)
+    print(f"Gap: \t{np.average(gaps)}")
     print(f"Time: \t{time.time() - start_time}")
 

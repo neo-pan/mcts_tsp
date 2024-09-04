@@ -7,6 +7,9 @@ import concurrent.futures
 import tempfile
 from dataclasses import dataclass
 
+from mcts_tsp import parallel_mcts_solve
+import mcts_tsp.mcts as mcts_solve
+
 @dataclass
 class Config:
     current_file_path: str = os.path.abspath(__file__)
@@ -342,7 +345,6 @@ if __name__ == "__main__":
     config.thread_num = 128
     config.total_instance_num = 128
     config.mcts_dir = "ours_mcts"
-    make_binary(config)
 
     num_nodes = 500
     pos, opt_sols = read_concorde_file(config, f"ours_mcts/tsp{num_nodes}_test_concorde.txt")
@@ -382,24 +384,21 @@ if __name__ == "__main__":
 
     import mcts
     start_time = time.time()
-    import multiprocessing
+    concorde_distances, mcts_distances, gaps, times, solutions = parallel_mcts_solve(
+        city_num=num_nodes,
+        distances_list=distance_matrix,
+        opt_solutions=opt_sols[:, :-1],  # Remove the last element as it's a duplicate of the first
+        heatmaps=heatmap_list,
+        num_threads=config.thread_num,
+        alpha=1,
+        beta=10,
+        param_h=10,
+        param_t=50./num_nodes,
+        max_candidate_num=1000,
+        candidate_use_heatmap=1,
+        max_depth=10,
+        debug=False
+    )
 
-    def run_mcts(args):
-        idx, distance_matrix, opt_sols, heatmap = args
-        return mcts.solve(num_nodes, 1, 10, 10, 50./num_nodes, 1000, 1, 10, distance_matrix, opt_sols[:-1], heatmap, debug=False)
-
-    pool = multiprocessing.Pool(processes=config.thread_num)
-
-    args_list = [(i, distance_matrix[i], opt_sols[i], heatmap_list[i]) for i in range(len(distance_matrix))]
-    results = pool.map(run_mcts, args_list)
-
-    pool.close()
-    pool.join()
-
-    # 处理结果
-    gaps = []
-    for i, result in enumerate(results):
-        gaps.append(result.Gap)
     print(f"Gap: \t{np.average(gaps)}")
     print(f"Time: \t{time.time() - start_time}")
-

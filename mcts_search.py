@@ -1,4 +1,5 @@
 import re
+import time
 import numpy as np
 import os
 import subprocess
@@ -46,7 +47,7 @@ def read_concorde_file(config, file_name):
 
     # Split the content into lines
     lines = content.strip().split('\n')
-    assert len(lines) == config.total_instance_num
+    assert len(lines) >= config.total_instance_num
 
     # Split each line into coordinates and solution parts
     parts = [line.split("output") for line in lines]
@@ -344,47 +345,48 @@ if __name__ == "__main__":
     config.thread_num = 1
     config.total_instance_num = 1
     config.mcts_dir = "ours_mcts"
-    make_binary(config)
+    # make_binary(config)
 
-    num_nodes = 10
-    # pos, opt_sols = read_concorde_file(config, f"ours_mcts/tsp{num_nodes}_test_concorde.txt")
-    # distance_matrix = np.sqrt(np.sum((pos[:, np.newaxis, :] - pos[:, :, np.newaxis])**2, axis=-1))
-    # print("Position shape:", pos.shape, "Optimal solutions shape:", opt_sols.shape, "Distance matrix shape:", distance_matrix.shape)
-    # heatmap_list = get_heatmap_list(config, "difusco", num_nodes, config.total_instance_num)
-
-    opt_sols = np.arange(num_nodes + 1) + 1
-    opt_sols = np.tile(opt_sols, (config.total_instance_num, 1))
-    heatmap_list = np.random.rand(config.total_instance_num, num_nodes, num_nodes)
-    pos = np.random.rand(config.total_instance_num, num_nodes, 2)
+    num_nodes = 1000
+    pos, opt_sols = read_concorde_file(config, f"ours_mcts/tsp{num_nodes}_test_concorde.txt")
+    pos = pos[0:1]
+    opt_sols = opt_sols[0:1]
     distance_matrix = np.sqrt(np.sum((pos[:, np.newaxis, :] - pos[:, :, np.newaxis])**2, axis=-1))
-    # distance_matrix = np.random.rand(config.total_instance_num, num_nodes, num_nodes)
-    # generate a classic atsp instance
-    distance_matrix = np.zeros((config.total_instance_num, num_nodes, num_nodes))
-    for i in range(num_nodes):
-        for j in range(num_nodes):
-            if i == j:
-                distance_matrix[0][i][j] = 0
-            else:
-                distance_matrix[0][i][j] = np.sqrt((i - j)**2 + 1)
+    print("Position shape:", pos.shape, "Optimal solutions shape:", opt_sols.shape, "Distance matrix shape:", distance_matrix.shape)
+    heatmap_list = get_heatmap_list(config, "difusco", num_nodes, config.total_instance_num)
 
-    print(f"heatmap_list shape: {heatmap_list.shape}, opt_sols shape: {opt_sols.shape}, distance_matrix shape: {distance_matrix.shape}")
-    print(distance_matrix[0])
+    # opt_sols = np.arange(num_nodes) + 1
+    # opt_sols = np.tile(opt_sols, (config.total_instance_num, 1))
+    # heatmap_list = np.random.rand(config.total_instance_num, num_nodes, num_nodes)
+    # pos = np.random.rand(config.total_instance_num, num_nodes, 2)
+    # distance_matrix = np.sqrt(np.sum((pos[:, np.newaxis, :] - pos[:, :, np.newaxis])**2, axis=-1))
+    # # distance_matrix = np.random.rand(config.total_instance_num, num_nodes, num_nodes)
+    # print(f"heatmap_list shape: {heatmap_list.shape}, opt_sols shape: {opt_sols.shape}, distance_matrix shape: {distance_matrix.shape}")
+    # print(distance_matrix[0])
 
-    gaps = []
-    gaps.append(
-        mcts(
-            config,
-            heatmap_list,
-            opt_sols,
-            distance_matrix,
-            # alpha=1,
-            # beta=50,
-            # H=2,
-            # T=10./num_nodes,
-            max_candidate_num=5,
-            # use_heatmap=1,
-            use_temp_dir=False,  # Set to False for debugging
-            # max_depth=100,  # Add max_depth parameter
-        )[-1]
-    )
-    print(f"Gap: \t{np.average(gaps[0])}")
+    # start_time = time.time()
+    # gaps = []
+    # gaps.append(
+    #     mcts(
+    #         config,
+    #         heatmap_list[0:1],
+    #         opt_sols[0:1],
+    #         distance_matrix[0:1],
+    #         # alpha=1,
+    #         # beta=50,
+    #         # H=2,
+    #         T=100./num_nodes,
+    #         # max_candidate_num=5,
+    #         # use_heatmap=1,
+    #         use_temp_dir=False,  # Set to False for debugging
+    #         # max_depth=100,  # Add max_depth parameter
+    #     )[-1]
+    # )
+    # print(f"Gap: \t{np.average(gaps[0])}")
+    # print(f"Time: \t{time.time() - start_time}")
+
+    import mcts
+    start_time = time.time()
+    mcts.solve(10000, 1, 10, 10, 100./num_nodes, 1000, 1, 10, distance_matrix[0], opt_sols[0], heatmap_list[0], debug=True)
+    print(f"Time: \t{time.time() - start_time}")
+

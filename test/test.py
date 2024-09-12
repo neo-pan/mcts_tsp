@@ -10,31 +10,6 @@ def generate_test_data(num_cities, num_instances):
     heatmaps = np.random.rand(num_instances, num_cities, num_cities)
     return distances, opt_solutions, heatmaps
 
-def test_solve_one_instance(distances, opt_solution, heatmap, city_num):
-    print("\nTesting solve_one_instance:")
-    result = mcts_tsp.solve_one_instance(
-        city_num=city_num,
-        alpha=1,
-        beta=10,
-        param_h=10,
-        param_t=100./city_num,
-        max_candidate_num=5,
-        candidate_use_heatmap=1,
-        max_depth=10,
-        distances=distances,
-        opt_solution=opt_solution,
-        heatmap=heatmap,
-        debug=True
-    )
-    
-    print(f"Concorde Distance: {result.Concorde_Distance}")
-    print(f"MCTS Distance: {result.MCTS_Distance}")
-    print(f"Gap: {result.Gap * 100:.2f}%")
-    print(f"Time: {result.Time:.2f} seconds")
-    print(f"Solution: {result.Solution}")
-    print(f"Length Time: {len(result.Length_Time)} records")
-    
-    return result
 
 def test_parallel_mcts_solve(distances_list, opt_solutions, heatmaps, city_num, num_threads):
     print("\nTesting parallel_mcts_solve:")
@@ -64,6 +39,7 @@ def test_parallel_mcts_solve(distances_list, opt_solutions, heatmaps, city_num, 
     print(f"Average Time per Instance: {np.mean(times):.2f} seconds")
     print(f"Total Time: {total_time:.2f} seconds")
     print(f"Length Time: {len(lengths_times)} instances")
+    print(lengths_times)
     for i, length_time in enumerate(lengths_times):
         print(f"Instance {i}: {len(length_time)} records")
 
@@ -79,12 +55,9 @@ def main():
     
     # Generate test data
     distances, opt_solutions, heatmaps = generate_test_data(num_cities, num_instances)
-    
-    # Test solve_one_instance
-    single_result = test_solve_one_instance(distances[0], opt_solutions[0], heatmaps[0], num_cities)
-    
+  
     # Test parallel_mcts_solve
-    parallel_results = test_parallel_mcts_solve(distances, opt_solutions, heatmaps, num_cities, num_threads)
+    parallel_results = test_parallel_mcts_solve(distances, opt_solutions, heatmaps, num_cities, num_threads)    
     
     print("\nTest completed successfully!")
 

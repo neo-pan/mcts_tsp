@@ -39,9 +39,9 @@ def test_parallel_mcts_solve(distances_list, opt_solutions, heatmaps, city_num, 
     print(f"Average Time per Instance: {np.mean(times):.2f} seconds")
     print(f"Total Time: {total_time:.2f} seconds")
     print(f"Length Time: {len(lengths_times)} instances")
-    print(lengths_times)
     for i, length_time in enumerate(lengths_times):
         print(f"Instance {i}: {len(length_time)} records")
+        print(length_time)
 
     return concorde_distances, mcts_distances, gaps, times, solutions
 
@@ -49,7 +49,7 @@ def main():
     np.random.seed(42)  # For reproducibility
     
     # Test parameters
-    num_cities = 1000
+    num_cities = 500
     num_instances = 4
     num_threads = 4
     

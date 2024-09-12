@@ -11,12 +11,14 @@ Distance_Type Markov_Decision_Process()
     Generate_Initial_Solution(); // State initialization of MDP
     Local_Search_by_2Opt_Move(); // 2-opt based local search within small neighborhood
     MCTS();                      // Tageted sampling via MCTS within enlarged neighborhood
+    Length_Time.push_back(std::make_pair(Current_Instance_Best_Distance, (double)clock() - Current_Instance_Begin_Time));
     // Repeat the following process until termination
     while (((double)clock() - Current_Instance_Begin_Time) / CLOCKS_PER_SEC < Param_T * Virtual_City_Num)
     {
         Jump_To_Random_State();
         Local_Search_by_2Opt_Move();
         MCTS();
+        Length_Time.push_back(std::make_pair(Current_Instance_Best_Distance, (double)clock() - Current_Instance_Begin_Time));
         // Max_Depth = 10 + (rand() % 80);
     }
 

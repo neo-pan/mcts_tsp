@@ -17,7 +17,7 @@ def test_solve_one_instance(distances, opt_solution, heatmap, city_num):
         alpha=1,
         beta=10,
         param_h=10,
-        param_t=0.1,
+        param_t=100./city_num,
         max_candidate_num=5,
         candidate_use_heatmap=1,
         max_depth=10,
@@ -32,6 +32,7 @@ def test_solve_one_instance(distances, opt_solution, heatmap, city_num):
     print(f"Gap: {result.Gap * 100:.2f}%")
     print(f"Time: {result.Time:.2f} seconds")
     print(f"Solution: {result.Solution}")
+    print(f"Length Time: {len(result.Length_Time)} records")
     
     return result
 
@@ -39,7 +40,7 @@ def test_parallel_mcts_solve(distances_list, opt_solutions, heatmaps, city_num, 
     print("\nTesting parallel_mcts_solve:")
     start_time = time.time()
     
-    concorde_distances, mcts_distances, gaps, times, solutions = mcts_tsp.parallel_mcts_solve(
+    concorde_distances, mcts_distances, gaps, times, solutions, lengths_times = mcts_tsp.parallel_mcts_solve(
         city_num=city_num,
         distances_list=distances_list,
         opt_solutions=opt_solutions,
@@ -48,7 +49,7 @@ def test_parallel_mcts_solve(distances_list, opt_solutions, heatmaps, city_num, 
         alpha=1,
         beta=10,
         param_h=10,
-        param_t=0.1,
+        param_t=10./city_num,
         max_candidate_num=5,
         candidate_use_heatmap=1,
         max_depth=10,
@@ -62,16 +63,19 @@ def test_parallel_mcts_solve(distances_list, opt_solutions, heatmaps, city_num, 
     print(f"Average Gap: {np.mean(gaps) * 100:.2f}%")
     print(f"Average Time per Instance: {np.mean(times):.2f} seconds")
     print(f"Total Time: {total_time:.2f} seconds")
-    
+    print(f"Length Time: {len(lengths_times)} instances")
+    for i, length_time in enumerate(lengths_times):
+        print(f"Instance {i}: {len(length_time)} records")
+
     return concorde_distances, mcts_distances, gaps, times, solutions
 
 def main():
     np.random.seed(42)  # For reproducibility
     
     # Test parameters
-    num_cities = 20
-    num_instances = 5
-    num_threads = 2
+    num_cities = 1000
+    num_instances = 4
+    num_threads = 4
     
     # Generate test data
     distances, opt_solutions, heatmaps = generate_test_data(num_cities, num_instances)

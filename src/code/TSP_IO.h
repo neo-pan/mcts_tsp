@@ -42,8 +42,8 @@ char *Heatmap_File_Name;
 /* 2020-02-11 */
 int Temp_City_Num;
 // int Temp_City_Num=10000;
-double Stored_Distances[Max_Inst_Num][Max_City_Num][Max_City_Num];
-int Stored_Opt_Solution[Max_Inst_Num][Max_City_Num];
+// double Stored_Distances[Max_Inst_Num][Max_City_Num][Max_City_Num];
+// int Stored_Opt_Solution[Max_Inst_Num][Max_City_Num];
 
 /* 2020-02-11 */
 int Inst_Num_Per_Batch;
@@ -79,6 +79,9 @@ int Virtual_City_Num;
 double **DoubleDistance;
 Distance_Type **Distance;
 int *Opt_Solution;
+
+// Store the length-time information
+vector<std::pair<double, double>> Length_Time;
 
 double Current_Instance_Begin_Time;
 Distance_Type Current_Instance_Best_Distance;
@@ -210,31 +213,31 @@ void Release_Memory(int City_Num)
 }
 
 // For TSP20-50-100 instances
-bool Fetch_Stored_Instance_Info(int Inst_Index)
-{
-    City_Num = Temp_City_Num;
-    Start_City = 0;
-    Salesman_Num = 1;
-    Virtual_City_Num = City_Num + Salesman_Num - 1;
+// bool Fetch_Stored_Instance_Info(int Inst_Index)
+// {
+//     City_Num = Temp_City_Num;
+//     Start_City = 0;
+//     Salesman_Num = 1;
+//     Virtual_City_Num = City_Num + Salesman_Num - 1;
 
-    Allocate_Memory(Virtual_City_Num);
+//     Allocate_Memory(Virtual_City_Num);
 
-    for (int i = 0; i < City_Num; i++)
-    {
-        for (int j = 0; j < City_Num; j++)
-        {
-            if (i != j) {
-                Distance[i][j] = Stored_Distances[Inst_Index][i][j] * Magnify_Rate;
-                DoubleDistance[i][j] = Stored_Distances[Inst_Index][i][j] * Magnify_Rate;
-            } else {
-                Distance[i][j] = Inf_Cost;
-                DoubleDistance[i][j] = Inf_Cost;
-            }
-        }
-    }
+//     for (int i = 0; i < City_Num; i++)
+//     {
+//         for (int j = 0; j < City_Num; j++)
+//         {
+//             if (i != j) {
+//                 Distance[i][j] = Stored_Distances[Inst_Index][i][j] * Magnify_Rate;
+//                 DoubleDistance[i][j] = Stored_Distances[Inst_Index][i][j] * Magnify_Rate;
+//             } else {
+//                 Distance[i][j] = Inf_Cost;
+//                 DoubleDistance[i][j] = Inf_Cost;
+//             }
+//         }
+//     }
 
-    return true;
-}
+//     return true;
+// }
 
 bool Save_Solution(char *Output_File_Name)
 {

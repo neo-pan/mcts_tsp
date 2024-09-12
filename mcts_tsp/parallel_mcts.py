@@ -18,5 +18,6 @@ def parallel_mcts_solve(city_num, distances_list, opt_solutions, heatmaps, num_t
     gaps = [result.Gap for result in results]
     times = [result.Time for result in results]
     solutions = [result.Solution for result in results]
+    lengths_times = [result.Length_Time for result in results]
 
-    return concorde_distances, mcts_distances, gaps, times, solutions
+    return concorde_distances, mcts_distances, gaps, times, solutions, lengths_times

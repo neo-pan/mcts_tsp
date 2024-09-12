@@ -126,15 +126,15 @@ Distance_Type Get_Solution_Total_Distance()
 
 //For TSP20-50-100 instances
 // Return the total distance (double) of the solution stored in Stored_Opt_Solution[Inst_Index]
-double Get_Stored_Solution_Double_Distance(int Inst_Index)
-{
-    double Stored_Solution_Double_Distance = 0;
-    for(int i=0; i<Virtual_City_Num-1; i++)
-        Stored_Solution_Double_Distance += DoubleDistance[Stored_Opt_Solution[Inst_Index][i]][Stored_Opt_Solution[Inst_Index][i+1]];
+// double Get_Stored_Solution_Double_Distance(int Inst_Index)
+// {
+//     double Stored_Solution_Double_Distance = 0;
+//     for(int i=0; i<Virtual_City_Num-1; i++)
+//         Stored_Solution_Double_Distance += DoubleDistance[Stored_Opt_Solution[Inst_Index][i]][Stored_Opt_Solution[Inst_Index][i+1]];
 
-    Stored_Solution_Double_Distance += DoubleDistance[Stored_Opt_Solution[Inst_Index][Virtual_City_Num-1]][Stored_Opt_Solution[Inst_Index][0]];
-    return Stored_Solution_Double_Distance;
-}
+//     Stored_Solution_Double_Distance += DoubleDistance[Stored_Opt_Solution[Inst_Index][Virtual_City_Num-1]][Stored_Opt_Solution[Inst_Index][0]];
+//     return Stored_Solution_Double_Distance;
+// }
 
 double Get_Stored_Solution_Double_Distance()
 {

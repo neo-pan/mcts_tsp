@@ -16,7 +16,8 @@ struct TSP_Result
     double MCTS_Distance;
     double Gap;
     double Time;
-    py::list Solution;  // 改为 py::list
+    py::list Solution;
+    py::list Length_Time;
 };
 
 TSP_Result solve(int city_num, double alpha, double beta, double param_h, double param_t,
@@ -142,6 +143,12 @@ TSP_Result solve(int city_num, double alpha, double beta, double param_h, double
         Cur_City = All_Node[Cur_City].Next_City;
     } while (Cur_City != Null && Cur_City != Start_City);
 
+    for (auto &pair : Length_Time)
+    {
+        pair.first /= Magnify_Rate;
+        pair.second /= CLOCKS_PER_SEC;
+    }
+
     if (debug)
     {
         std::cout << "求解完成，结果如下：" << std::endl;
@@ -156,12 +163,16 @@ TSP_Result solve(int city_num, double alpha, double beta, double param_h, double
         for (int i = 0; i < Solution.size(); ++i) {
             std::cout << Solution[i] << " ";
         }
+        for (auto &pair : Length_Time)
+        {
+            std::cout << "Length: " << pair.first << " Time: " << pair.second << std::endl;
+        }
         std::cout << std::endl;
     }
 
     Release_Memory(Virtual_City_Num);
 
-    return TSP_Result{Concorde_Distance, MCTS_Distance, Gap, Time, py::cast(Solution)};
+    return TSP_Result{Concorde_Distance, MCTS_Distance, Gap, Time, py::cast(Solution), py::cast(Length_Time)};
 }
 
 PYBIND11_MODULE(_mcts_cpp, m)
@@ -188,20 +199,23 @@ PYBIND11_MODULE(_mcts_cpp, m)
         .def_readonly("Gap", &TSP_Result::Gap)
         .def_readonly("Time", &TSP_Result::Time)
         .def_readonly("Solution", &TSP_Result::Solution)
+        .def_readonly("Length_Time", &TSP_Result::Length_Time)
         .def("__repr__", [](const TSP_Result &r) {
             std::string solution_str = py::str(py::tuple(r.Solution)).cast<std::string>();
+            std::string length_time_str = py::str(py::tuple(r.Length_Time)).cast<std::string>();
             return "TSP_Result(Concorde_Distance=" + std::to_string(r.Concorde_Distance) +
                    ", MCTS_Distance=" + std::to_string(r.MCTS_Distance) +
                    ", Gap=" + std::to_string(r.Gap) +
                    ", Time=" + std::to_string(r.Time) +
-                   ", solution=" + solution_str + ")";
+                   ", solution=" + solution_str +
+                   ", length_time=" + length_time_str + ")";
         })
         .def(py::pickle(
             [](const TSP_Result &r) { // __getstate__
-                return py::make_tuple(r.Concorde_Distance, r.MCTS_Distance, r.Gap, r.Time, r.Solution);
+                return py::make_tuple(r.Concorde_Distance, r.MCTS_Distance, r.Gap, r.Time, r.Solution, r.Length_Time);
             },
             [](py::tuple t) { // __setstate__
-                if (t.size() != 5)
+                if (t.size() != 6)
                     throw std::runtime_error("Invalid state!");
                 TSP_Result r;
                 r.Concorde_Distance = t[0].cast<double>();
@@ -209,6 +223,7 @@ PYBIND11_MODULE(_mcts_cpp, m)
                 r.Gap = t[2].cast<double>();
                 r.Time = t[3].cast<double>();
                 r.Solution = t[4].cast<py::list>();
+                r.Length_Time = t[5].cast<py::list>();
                 return r;
             }
         ));

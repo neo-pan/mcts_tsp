@@ -10,46 +10,16 @@ pip install .
 
 ## Usage
 
-This package provides two main functions:
+This package provides one main function:
 
-### 1. solve_one_instance
-
-Solves a single TSP instance.
-
-```python
-from mcts_tsp import solve_one_instance
-
-result = solve_one_instance(
-    distances=np.array([
-        [0, 1, 2],
-        [1, 0, 3],
-        [2, 3, 0]
-    ]),
-    opt_solution=np.array([1, 2, 3]),
-    heatmap=np.array([
-        [0.1, 0.2, 0.3],
-        [0.2, 0.3, 0.4],
-        [0.3, 0.4, 0.5]
-    ]),
-    city_num=3,
-    alpha=1,
-    beta=50,
-    param_h=2,
-    param_t=10,
-    max_candidate_num=5,
-    candidate_use_heatmap=1,
-    max_depth=100,
-)
-```
-
-### 2. parallel_mcts_solve
+### parallel_mcts_solve
 
 Solves multiple TSP instances in parallel using MCTS.
 
 ```python
 from mcts_tsp import parallel_mcts_solve
 
-results = parallel_mcts_solve(
+concorde_distances, mcts_distances, gaps, times, solutions, lengths_times = parallel_mcts_solve(
     city_num=3,
     distances_list=[
         [0, 1, 2],
@@ -88,3 +58,7 @@ results = parallel_mcts_solve(
     max_depth=100,
 )
 ```
+
+## Credit
+
+This project is based on the original work of [Spider-scnu/TSP](https://github.com/Spider-scnu/TSP), which is licensed under the MIT License.

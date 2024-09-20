@@ -1,30 +1,22 @@
 from pybind11.setup_helpers import Pybind11Extension, build_ext
 from setuptools import setup, find_packages
+import toml
 
-__version__ = "0.0.1"
+def get_version():
+    with open("pyproject.toml", "r") as f:
+        toml_data = toml.load(f)
+    
+    return toml_data["project"]["version"]
 
 ext_modules = [
     Pybind11Extension(
         "mcts_tsp._mcts_cpp",
         ["src/code/mcts.cpp"],
-        define_macros=[("VERSION_INFO", __version__)],
+        define_macros=[("VERSION_INFO", get_version())],
     ),
 ]
 
 setup(
-    name="mcts_tsp",
-    version=__version__,
-    author="Xuanhao Pan",
-    author_email="xuanhaopan@link.cuhk.edu.cn",
-    description="A python wrapper for MCTS TSP solver",
-    long_description="",
     ext_modules=ext_modules,
-    extras_require={"test": "pytest"},
     cmdclass={"build_ext": build_ext},
-    zip_safe=False,
-    python_requires=">=3.7",
-    packages=find_packages(),
-    install_requires=[
-        "numpy",
-    ],
 )

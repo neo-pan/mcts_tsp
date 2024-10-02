@@ -4,11 +4,11 @@ from .mcts_wrapper import solve_one_instance
 
 
 def parallel_mcts_solve(city_num, distances_list, opt_solutions, heatmaps, num_threads, alpha=1, beta=10, param_h=10, param_t=0.1,
-                        max_candidate_num=5, candidate_use_heatmap=1, max_depth=10, debug=False):
+                        max_candidate_num=5, candidate_use_heatmap=1, max_depth=10, log_len_time=False, debug=False):
     solve_with_params = partial(solve_one_instance, city_num=city_num, alpha=alpha, beta=beta, param_h=param_h,
                                 param_t=param_t, max_candidate_num=max_candidate_num,
                                 candidate_use_heatmap=candidate_use_heatmap, max_depth=max_depth,
-                                debug=debug)
+                                log_len_time=log_len_time, debug=debug)
 
     with concurrent.futures.ProcessPoolExecutor(max_workers=num_threads) as executor:
         results = list(executor.map(solve_with_params, distances_list, opt_solutions, heatmaps))

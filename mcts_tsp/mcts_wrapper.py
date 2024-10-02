@@ -15,6 +15,7 @@ def solve_one_instance(
     max_candidate_num: int,
     candidate_use_heatmap: int,
     max_depth: int,
+    log_len_time: bool = False,
     debug: bool = False
 ) -> TSP_Result:
     return mcts.solve(
@@ -29,5 +30,6 @@ def solve_one_instance(
         distances,
         opt_solution,
         heatmap,
+        log_len_time,
         debug
     )

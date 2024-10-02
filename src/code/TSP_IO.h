@@ -26,6 +26,7 @@ double Param_T = 0.10; // used to control the termination condition
 int Max_Candidate_Num = 5; // used to control the number of candidate neighbors of each city
 int Candidate_Use_Heatmap = 1; // used to control whether to use the heatmap information
 int Max_Depth = 10; // used to control the depth of the search tree
+bool Log_Length_Time = false; // used to control whether to log the length-time information
 
 // #define Default_Random_Seed  (unsigned)time(NULL);
 #define Default_Random_Seed 489663920;

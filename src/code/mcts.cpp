@@ -22,7 +22,7 @@ struct TSP_Result
 
 TSP_Result solve(int city_num, double alpha, double beta, double param_h, double param_t,
                  int max_candidate_num, int candidate_use_heatmap, int max_depth,
-                 py::array_t<double> distances, py::array_t<int> opt_solution, py::array_t<double> heatmap, bool debug)
+                 py::array_t<double> distances, py::array_t<int> opt_solution, py::array_t<double> heatmap, bool log_len_time, bool debug)
 {
 
     double Overall_Begin_Time = (double)clock();
@@ -37,6 +37,7 @@ TSP_Result solve(int city_num, double alpha, double beta, double param_h, double
     Max_Candidate_Num = max_candidate_num;
     Candidate_Use_Heatmap = candidate_use_heatmap;
     Max_Depth = max_depth;
+    Log_Length_Time = log_len_time;
 
     if (debug)
     {
@@ -189,6 +190,7 @@ PYBIND11_MODULE(_mcts_cpp, m)
         py::arg("distances"),
         py::arg("opt_solution"),
         py::arg("heatmap"),
+        py::arg("log_len_time") = false,
         py::arg("debug") = false
     );
 

@@ -11,7 +11,7 @@ def generate_test_data(num_cities, num_instances):
     return distances, opt_solutions, heatmaps
 
 
-def test_parallel_mcts_solve(distances_list, opt_solutions, heatmaps, city_num, num_threads):
+def test_parallel_mcts_solve(distances_list, opt_solutions, heatmaps, city_num, num_threads, log_len_time=False):
     print("\nTesting parallel_mcts_solve:")
     start_time = time.time()
     
@@ -28,6 +28,7 @@ def test_parallel_mcts_solve(distances_list, opt_solutions, heatmaps, city_num, 
         max_candidate_num=5,
         candidate_use_heatmap=1,
         max_depth=10,
+        log_len_time=log_len_time,
         debug=False
     )
     
@@ -57,7 +58,10 @@ def main():
     distances, opt_solutions, heatmaps = generate_test_data(num_cities, num_instances)
   
     # Test parallel_mcts_solve
-    parallel_results = test_parallel_mcts_solve(distances, opt_solutions, heatmaps, num_cities, num_threads)    
+    parallel_results = test_parallel_mcts_solve(distances, opt_solutions, heatmaps, num_cities, num_threads)
+
+    # Test log_len_time
+    parallel_results = test_parallel_mcts_solve(distances, opt_solutions, heatmaps, num_cities, num_threads, log_len_time=True)
     
     print("\nTest completed successfully!")
 

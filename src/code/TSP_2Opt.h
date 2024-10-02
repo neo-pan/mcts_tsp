@@ -1,7 +1,8 @@
 #include <pybind11/pybind11.h>
 namespace py = pybind11;
 
-// Evaluate the delta after applying a 2-opt move (delta >0 indicates an improving solution)
+// Evaluate the delta after applying a 2-opt move (delta >0 indicates an
+// improving solution)
 Distance_Type Get_2Opt_Delta(int First_City, int Second_City)
 {
     if (Check_If_Two_City_Same_Or_Adjacent(First_City, Second_City) == true)
@@ -10,8 +11,10 @@ Distance_Type Get_2Opt_Delta(int First_City, int Second_City)
     int First_Next_City = All_Node[First_City].Next_City;
     int Second_Next_City = All_Node[Second_City].Next_City;
 
-    Distance_Type Delta = Get_Distance(First_City, First_Next_City) + Get_Distance(Second_City, Second_Next_City) - Get_Distance(First_City, Second_City) - Get_Distance(First_Next_City, Second_Next_City);
-    // Update the Chosen_Times[][] and Total_Simulation_Times which are used in MCTS
+    Distance_Type Delta = Get_Distance(First_City, First_Next_City) + Get_Distance(Second_City, Second_Next_City) -
+                          Get_Distance(First_City, Second_City) - Get_Distance(First_Next_City, Second_Next_City);
+    // Update the Chosen_Times[][] and Total_Simulation_Times which are used in
+    // MCTS
     Chosen_Times[First_City][Second_City]++;
     // Chosen_Times[Second_City][First_City]++;
     Chosen_Times[First_Next_City][Second_Next_City]++;
@@ -36,7 +39,8 @@ void Apply_2Opt_Move(int First_City, int Second_City)
     All_Node[First_Next_City].Next_City = Second_Next_City;
     All_Node[Second_Next_City].Pre_City = First_Next_City;
 
-    // Update the values of matrix Weight[][] by back propagation, which would be used in MCTS
+    // Update the values of matrix Weight[][] by back propagation, which would
+    // be used in MCTS
     double Increase_Rate = Beta * (pow(2.718, (double)(Delta) / (double)(Before_Distance)) - 1);
 
     Weight[First_City][Second_City] += Increase_Rate;
@@ -54,9 +58,10 @@ bool Improve_By_2Opt_Move()
         {
             int Candidate_City = Candidate[i][j];
             Delta = Get_2Opt_Delta(i, Candidate_City);
-            if (Delta> 0)
+            if (Delta > 0)
             {
-                // cout << "Improving by 2-opt move: " << i << " " << Candidate_City << " Delta: " << Delta << endl;
+                // cout << "Improving by 2-opt move: " << i << " " <<
+                // Candidate_City << " Delta: " << Delta << endl;
                 Apply_2Opt_Move(i, Candidate_City);
                 If_Improved = true;
                 break;
@@ -70,16 +75,17 @@ bool Improve_By_2Opt_Move()
 void Local_Search_by_2Opt_Move()
 {
     while (Improve_By_2Opt_Move() == true)
-        if (PyErr_CheckSignals() != 0) {
-			throw py::error_already_set();
-		}
-    ;
-        // cout << "Improving by 2-opt move: " << endl;
+        if (PyErr_CheckSignals() != 0)
+        {
+            throw py::error_already_set();
+        };
+    // cout << "Improving by 2-opt move: " << endl;
 
     Distance_Type Cur_Solution_Total_Distance = Get_Solution_Total_Distance();
     if (Cur_Solution_Total_Distance < Current_Instance_Best_Distance)
     {
-        // Store the information of the best found solution to Struct_Node *Best_All_Node
+        // Store the information of the best found solution to Struct_Node
+        // *Best_All_Node
         Current_Instance_Best_Distance = Cur_Solution_Total_Distance;
         Store_Best_Solution();
     }

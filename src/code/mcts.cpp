@@ -1,10 +1,11 @@
-#include <pybind11/pybind11.h>
 #include <pybind11/numpy.h>
+#include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
-#include "TSP_IO.h"
-#include "TSP_Basic_Functions.h"
-#include "TSP_Init.h"
+
 #include "TSP_2Opt.h"
+#include "TSP_Basic_Functions.h"
+#include "TSP_IO.h"
+#include "TSP_Init.h"
 #include "TSP_MCTS.h"
 #include "TSP_Markov_Decision.h"
 
@@ -20,11 +21,10 @@ struct TSP_Result
     py::list Length_Time;
 };
 
-TSP_Result solve(int city_num, double alpha, double beta, double param_h, double param_t,
-                 int max_candidate_num, int candidate_use_heatmap, int max_depth,
-                 py::array_t<double> distances, py::array_t<int> opt_solution, py::array_t<double> heatmap, bool log_len_time, bool debug)
+TSP_Result solve(int city_num, double alpha, double beta, double param_h, double param_t, int max_candidate_num,
+                 int candidate_use_heatmap, int max_depth, py::array_t<double> distances, py::array_t<int> opt_solution,
+                 py::array_t<double> heatmap, bool log_len_time, bool debug)
 {
-
     double Overall_Begin_Time = (double)clock();
     srand(Random_Seed);
 
@@ -161,7 +161,8 @@ TSP_Result solve(int city_num, double alpha, double beta, double param_h, double
         std::cout << "Time: " << Time << " seconds" << std::endl;
         std::cout << "Overall_Time: " << Overall_Time << " seconds" << std::endl;
         std::cout << "Solution: ";
-        for (int i = 0; i < Solution.size(); ++i) {
+        for (int i = 0; i < Solution.size(); ++i)
+        {
             std::cout << Solution[i] << " ";
         }
         for (auto &pair : Length_Time)
@@ -178,21 +179,10 @@ TSP_Result solve(int city_num, double alpha, double beta, double param_h, double
 
 PYBIND11_MODULE(_mcts_cpp, m)
 {
-    m.def("solve", &solve, "A function to solve TSP using MCTS",
-        py::arg("city_num"),
-        py::arg("alpha"),
-        py::arg("beta"),
-        py::arg("param_h"),
-        py::arg("param_t"),
-        py::arg("max_candidate_num"),
-        py::arg("candidate_use_heatmap"),
-        py::arg("max_depth"),
-        py::arg("distances"),
-        py::arg("opt_solution"),
-        py::arg("heatmap"),
-        py::arg("log_len_time") = false,
-        py::arg("debug") = false
-    );
+    m.def("solve", &solve, "A function to solve TSP using MCTS", py::arg("city_num"), py::arg("alpha"), py::arg("beta"),
+          py::arg("param_h"), py::arg("param_t"), py::arg("max_candidate_num"), py::arg("candidate_use_heatmap"),
+          py::arg("max_depth"), py::arg("distances"), py::arg("opt_solution"), py::arg("heatmap"),
+          py::arg("log_len_time") = false, py::arg("debug") = false);
 
     py::class_<TSP_Result>(m, "TSP_Result")
         .def(py::init<>())
@@ -202,16 +192,15 @@ PYBIND11_MODULE(_mcts_cpp, m)
         .def_readonly("Time", &TSP_Result::Time)
         .def_readonly("Solution", &TSP_Result::Solution)
         .def_readonly("Length_Time", &TSP_Result::Length_Time)
-        .def("__repr__", [](const TSP_Result &r) {
-            std::string solution_str = py::str(py::tuple(r.Solution)).cast<std::string>();
-            std::string length_time_str = py::str(py::tuple(r.Length_Time)).cast<std::string>();
-            return "TSP_Result(Concorde_Distance=" + std::to_string(r.Concorde_Distance) +
-                   ", MCTS_Distance=" + std::to_string(r.MCTS_Distance) +
-                   ", Gap=" + std::to_string(r.Gap) +
-                   ", Time=" + std::to_string(r.Time) +
-                   ", solution=" + solution_str +
-                   ", length_time=" + length_time_str + ")";
-        })
+        .def("__repr__",
+             [](const TSP_Result &r) {
+                 std::string solution_str = py::str(py::tuple(r.Solution)).cast<std::string>();
+                 std::string length_time_str = py::str(py::tuple(r.Length_Time)).cast<std::string>();
+                 return "TSP_Result(Concorde_Distance=" + std::to_string(r.Concorde_Distance) +
+                        ", MCTS_Distance=" + std::to_string(r.MCTS_Distance) + ", Gap=" + std::to_string(r.Gap) +
+                        ", Time=" + std::to_string(r.Time) + ", solution=" + solution_str +
+                        ", length_time=" + length_time_str + ")";
+             })
         .def(py::pickle(
             [](const TSP_Result &r) { // __getstate__
                 return py::make_tuple(r.Concorde_Distance, r.MCTS_Distance, r.Gap, r.Time, r.Solution, r.Length_Time);
@@ -227,6 +216,5 @@ PYBIND11_MODULE(_mcts_cpp, m)
                 r.Solution = t[4].cast<py::list>();
                 r.Length_Time = t[5].cast<py::list>();
                 return r;
-            }
-        ));
+            }));
 }

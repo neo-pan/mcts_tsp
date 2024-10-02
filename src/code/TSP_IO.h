@@ -1,17 +1,17 @@
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <iostream>
-#include <sstream>
-#include <fstream>
 #include <string.h>
 #include <time.h>
+
 #include <ctime>
+#include <fstream>
+#include <iostream>
+#include <sstream>
 #include <vector>
-#include <string.h>
-#include <math.h>
 using namespace std;
 
-int Total_Instance_Num =1;
+int Total_Instance_Num = 1;
 
 #define Null -1
 #define Inf_Cost 1000000000
@@ -19,14 +19,14 @@ int Total_Instance_Num =1;
 #define Max_Inst_Num 1 // to be modified
 #define Max_City_Num 10000
 // Hyper parameters
-double Alpha = 1;      // used in estimating the potential of each edge
-double Beta = 10;      // used in back propagation
-double Param_H = 10;   // used to control the number of sampling actions
-double Param_T = 0.10; // used to control the termination condition
-int Max_Candidate_Num = 5; // used to control the number of candidate neighbors of each city
+double Alpha = 1;              // used in estimating the potential of each edge
+double Beta = 10;              // used in back propagation
+double Param_H = 10;           // used to control the number of sampling actions
+double Param_T = 0.10;         // used to control the termination condition
+int Max_Candidate_Num = 5;     // used to control the number of candidate neighbors of each city
 int Candidate_Use_Heatmap = 1; // used to control whether to use the heatmap information
-int Max_Depth = 10; // used to control the depth of the search tree
-bool Log_Length_Time = false; // used to control whether to log the length-time information
+int Max_Depth = 10;            // used to control the depth of the search tree
+bool Log_Length_Time = false;  // used to control whether to log the length-time information
 
 // #define Default_Random_Seed  (unsigned)time(NULL);
 #define Default_Random_Seed 489663920;
@@ -75,7 +75,8 @@ double Sum_Gap = 0;
 // Used to store the input information of a given instance
 int City_Num;
 int Start_City;
-int Salesman_Num; // This program was proposed for the multiple TSP. If Salesman_Num=1, it reduces to the TSP
+int Salesman_Num; // This program was proposed for the multiple TSP. If
+                  // Salesman_Num=1, it reduces to the TSP
 int Virtual_City_Num;
 double **DoubleDistance;
 Distance_Type **Distance;
@@ -228,8 +229,9 @@ void Release_Memory(int City_Num)
 //         for (int j = 0; j < City_Num; j++)
 //         {
 //             if (i != j) {
-//                 Distance[i][j] = Stored_Distances[Inst_Index][i][j] * Magnify_Rate;
-//                 DoubleDistance[i][j] = Stored_Distances[Inst_Index][i][j] * Magnify_Rate;
+//                 Distance[i][j] = Stored_Distances[Inst_Index][i][j] *
+//                 Magnify_Rate; DoubleDistance[i][j] =
+//                 Stored_Distances[Inst_Index][i][j] * Magnify_Rate;
 //             } else {
 //                 Distance[i][j] = Inf_Cost;
 //                 DoubleDistance[i][j] = Inf_Cost;

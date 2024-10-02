@@ -2,7 +2,6 @@ import mcts_tsp
 import numpy as np
 import time
 
-
 def generate_test_data(num_cities, num_instances):
     pos = np.random.rand(num_instances, num_cities, 2)
     distances = np.linalg.norm(pos[:, np.newaxis, :] - pos[:, :, np.newaxis], axis=-1)
@@ -11,7 +10,7 @@ def generate_test_data(num_cities, num_instances):
     return distances, opt_solutions, heatmaps
 
 
-def test_parallel_mcts_solve(distances_list, opt_solutions, heatmaps, city_num, num_threads, log_len_time=False):
+def test_parallel_mcts_solve(distances_list, opt_solutions, heatmaps, city_num, num_threads, debug=False, log_len_time=False):
     print("\nTesting parallel_mcts_solve:")
     start_time = time.time()
     
@@ -29,7 +28,7 @@ def test_parallel_mcts_solve(distances_list, opt_solutions, heatmaps, city_num, 
         candidate_use_heatmap=1,
         max_depth=10,
         log_len_time=log_len_time,
-        debug=False
+        debug=debug
     )
     
     total_time = time.time() - start_time
@@ -58,7 +57,7 @@ def main():
     distances, opt_solutions, heatmaps = generate_test_data(num_cities, num_instances)
   
     # Test parallel_mcts_solve
-    parallel_results = test_parallel_mcts_solve(distances, opt_solutions, heatmaps, num_cities, num_threads)
+    parallel_results = test_parallel_mcts_solve(distances, opt_solutions, heatmaps, num_cities, num_threads, debug=True)
 
     # Test log_len_time
     parallel_results = test_parallel_mcts_solve(distances, opt_solutions, heatmaps, num_cities, num_threads, log_len_time=True)

@@ -1,3 +1,5 @@
+#include <pybind11/pybind11.h>
+namespace py = pybind11;
 
 // Evaluate the delta after applying a 2-opt move (delta >0 indicates an improving solution)
 Distance_Type Get_2Opt_Delta(int First_City, int Second_City)
@@ -68,6 +70,9 @@ bool Improve_By_2Opt_Move()
 void Local_Search_by_2Opt_Move()
 {
     while (Improve_By_2Opt_Move() == true)
+        if (PyErr_CheckSignals() != 0) {
+			throw py::error_already_set();
+		}
     ;
         // cout << "Improving by 2-opt move: " << endl;
 

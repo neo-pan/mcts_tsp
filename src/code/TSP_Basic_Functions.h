@@ -1,3 +1,5 @@
+#include <pybind11/pybind11.h>
+namespace py = pybind11;
 
 // Return an integer between [0,Divide_Num)
 int Get_Random_Int(int Divide_Num)
@@ -216,6 +218,9 @@ void Identify_Candidate_Set()
 
 		while(true)
 		{
+			if (PyErr_CheckSignals() != 0) {
+				throw py::error_already_set();
+			}
 			int Unselected_City = Null;
 			if (Candidate_Use_Heatmap)
 				Unselected_City=Get_Best_Unselected_City(i);

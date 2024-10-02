@@ -1,3 +1,5 @@
+#include <pybind11/pybind11.h>
+namespace py = pybind11;
 
 // Initialize the parameters used in MCTS
 void MCTS_Init()
@@ -275,6 +277,9 @@ void MCTS()
 	//while(true)
 	while(((double)clock()-Current_Instance_Begin_Time) /CLOCKS_PER_SEC<Param_T*Virtual_City_Num)
 	{
+		if (PyErr_CheckSignals() != 0) {
+			throw py::error_already_set();
+		}
 		Distance_Type Before_Simulation_Distance = Get_Solution_Total_Distance();
 
 		//Simulate a number of (controled by Param_H) actions

@@ -2,6 +2,8 @@
 requires = [
     "setuptools>=42",
     "pybind11>=2.10.0",
+    "wheel",
+    "toml",
 ]
 build-backend = "setuptools.build_meta"
 
@@ -30,3 +32,6 @@ authors = [
 
 [project.urls]
 Homepage = "https://github.com/neo-pan/mcts_tsp"
+
+[tool.setuptools]
+packages = ["mcts_tsp"]

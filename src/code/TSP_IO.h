@@ -4,6 +4,7 @@
 #include <string.h>
 #include <time.h>
 
+#include <chrono>
 #include <ctime>
 #include <fstream>
 #include <iostream>
@@ -19,14 +20,14 @@ int Total_Instance_Num = 1;
 #define Max_Inst_Num 1 // to be modified
 #define Max_City_Num 10000
 // Hyper parameters
-double Alpha = 1;              // used in estimating the potential of each edge
-double Beta = 10;              // used in back propagation
-double Param_H = 10;           // used to control the number of sampling actions
-double Param_T = 0.10;         // used to control the termination condition
-int Max_Candidate_Num = 5;     // used to control the number of candidate neighbors of each city
-int Candidate_Use_Heatmap = 1; // used to control whether to use the heatmap information
-int Max_Depth = 10;            // used to control the depth of the search tree
-bool Log_Length_Time = false;  // used to control whether to log the length-time information
+thread_local double Alpha = 1;              // used in estimating the potential of each edge
+thread_local double Beta = 10;              // used in back propagation
+thread_local double Param_H = 10;           // used to control the number of sampling actions
+thread_local double Param_T = 0.10;         // used to control the termination condition
+thread_local int Max_Candidate_Num = 5;     // used to control the number of candidate neighbors of each city
+thread_local int Candidate_Use_Heatmap = 1; // used to control whether to use the heatmap information
+thread_local int Max_Depth = 10;            // used to control the depth of the search tree
+thread_local bool Log_Length_Time = false;  // used to control whether to log the length-time information
 
 // #define Default_Random_Seed  (unsigned)time(NULL);
 #define Default_Random_Seed 489663920;
@@ -35,23 +36,23 @@ unsigned Random_Seed = Default_Random_Seed;
 typedef int Distance_Type;
 
 /* 2020-02-11 */
-char *Input_File_Name;
+thread_local char *Input_File_Name;
 // char *Input_File_Name="tsp10000_test_concorde.txt";
 // char Heatmap_File_Name[100];
-char *Heatmap_File_Name;
+thread_local char *Heatmap_File_Name;
 
 /* 2020-02-11 */
-int Temp_City_Num;
+thread_local int Temp_City_Num;
 // int Temp_City_Num=10000;
 // double Stored_Distances[Max_Inst_Num][Max_City_Num][Max_City_Num];
 // int Stored_Opt_Solution[Max_Inst_Num][Max_City_Num];
 
 /* 2020-02-11 */
-int Inst_Num_Per_Batch;
+thread_local int Inst_Num_Per_Batch;
 // int Inst_Num_Per_Batch=1+Total_Instance_Num/32;
 // int Inst_Num_Per_Batch=32;
 // int Inst_Num_Per_Batch=16;
-int Index_In_Batch = 0;
+thread_local int Index_In_Batch = 0;
 
 /*
 //Information of the 38 TSPLIB instances
@@ -63,30 +64,30 @@ char Input_Inst_Name[100];
 */
 
 // Used to store the statistic results
-char *Statistics_File_Name = "Statistic_Results.txt";
-int Test_Inst_Num = 0;
-int Beat_Best_Known_Times = 0;
-int Match_Best_Known_Times = 0;
-int Miss_Best_Known_Times = 0;
-double Sum_Opt_Distance = 0;
-double Sum_My_Distance = 0;
-double Sum_Gap = 0;
+thread_local char *Statistics_File_Name = "Statistic_Results.txt";
+thread_local int Test_Inst_Num = 0;
+thread_local int Beat_Best_Known_Times = 0;
+thread_local int Match_Best_Known_Times = 0;
+thread_local int Miss_Best_Known_Times = 0;
+thread_local double Sum_Opt_Distance = 0;
+thread_local double Sum_My_Distance = 0;
+thread_local double Sum_Gap = 0;
 
 // Used to store the input information of a given instance
-int City_Num;
-int Start_City;
-int Salesman_Num; // This program was proposed for the multiple TSP. If
-                  // Salesman_Num=1, it reduces to the TSP
-int Virtual_City_Num;
-double **DoubleDistance;
-Distance_Type **Distance;
-int *Opt_Solution;
+thread_local int City_Num;
+thread_local int Start_City;
+thread_local int Salesman_Num; // This program was proposed for the multiple TSP. If
+                               // Salesman_Num=1, it reduces to the TSP
+thread_local int Virtual_City_Num;
+thread_local double **DoubleDistance;
+thread_local Distance_Type **Distance;
+thread_local int *Opt_Solution;
 
 // Store the length-time information
-vector<std::pair<double, double>> Length_Time;
+thread_local vector<std::pair<double, double>> Length_Time;
 
-double Current_Instance_Begin_Time;
-Distance_Type Current_Instance_Best_Distance;
+thread_local std::chrono::high_resolution_clock::time_point Current_Instance_Begin_Time;
+thread_local Distance_Type Current_Instance_Best_Distance;
 
 // Used to store a solution in double link
 struct Struct_Node
@@ -96,34 +97,34 @@ struct Struct_Node
     int Salesman;
 };
 
-Struct_Node *All_Node;      // Store the incumbent tour
-Struct_Node *Best_All_Node; // Store the best found tour
+thread_local Struct_Node *All_Node;      // Store the incumbent tour
+thread_local Struct_Node *Best_All_Node; // Store the best found tour
 
 // Used to store a solution in an array
-int *Solution;
+thread_local int *Solution;
 
 // Used to store a set of candidate neighbors of each city
-int *Candidate_Num;
-int **Candidate;
-bool *If_City_Selected;
+thread_local int *Candidate_Num;
+thread_local int **Candidate;
+thread_local bool *If_City_Selected;
 
 // Used to store the information of an action
-int Pair_City_Num;
-int Temp_Pair_Num;
-int *City_Sequence;
-int *Temp_City_Sequence;
-Distance_Type *Gain;
-Distance_Type *Real_Gain;
+thread_local int Pair_City_Num;
+thread_local int Temp_Pair_Num;
+thread_local int *City_Sequence;
+thread_local int *Temp_City_Sequence;
+thread_local Distance_Type *Gain;
+thread_local Distance_Type *Real_Gain;
 
 // Used in MCTS
-double **Edge_Heatmap;
-double **Weight;
-double Avg_Weight;
-int **Chosen_Times;
-int *Promising_City;
-int *Probabilistic;
-int Promising_City_Num;
-int Total_Simulation_Times;
+thread_local double **Edge_Heatmap;
+thread_local double **Weight;
+thread_local double Avg_Weight;
+thread_local int **Chosen_Times;
+thread_local int *Promising_City;
+thread_local int *Probabilistic;
+thread_local int Promising_City_Num;
+thread_local int Total_Simulation_Times;
 
 Distance_Type Get_Solution_Total_Distance();
 void Convert_Solution_To_All_Node();

@@ -1,3 +1,4 @@
+#include <chrono>
 #include <pybind11/numpy.h>
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
@@ -17,6 +18,7 @@ struct TSP_Result
     double MCTS_Distance;
     double Gap;
     double Time;
+    double Overall_Time;
     py::list Solution;
     py::list Length_Time;
 };
@@ -25,7 +27,7 @@ TSP_Result solve(int city_num, double alpha, double beta, double param_h, double
                  int candidate_use_heatmap, int max_depth, py::array_t<double> distances, py::array_t<int> opt_solution,
                  py::array_t<double> heatmap, bool log_len_time, bool debug)
 {
-    double Overall_Begin_Time = (double)clock();
+    auto Overall_Start = std::chrono::high_resolution_clock::now();
     srand(Random_Seed);
 
     // Initialize parameters
@@ -113,6 +115,8 @@ TSP_Result solve(int city_num, double alpha, double beta, double param_h, double
         }
     }
 
+    py::gil_scoped_release release;
+
     for (int i = 0; i < City_Num; i++)
     {
         for (int j = i + 1; j < City_Num; j++)
@@ -122,7 +126,7 @@ TSP_Result solve(int city_num, double alpha, double beta, double param_h, double
         }
     }
 
-    Current_Instance_Begin_Time = (double)clock();
+    Current_Instance_Begin_Time = std::chrono::high_resolution_clock::now();
     Current_Instance_Best_Distance = Inf_Cost;
 
     Identify_Candidate_Set();
@@ -133,8 +137,10 @@ TSP_Result solve(int city_num, double alpha, double beta, double param_h, double
     double Concorde_Distance = Stored_Solution_Double_Distance / Magnify_Rate;
     double MCTS_Distance = Current_Solution_Double_Distance / Magnify_Rate;
     double Gap = (Current_Solution_Double_Distance - Stored_Solution_Double_Distance) / Stored_Solution_Double_Distance;
-    double Time = ((double)clock() - Current_Instance_Begin_Time) / CLOCKS_PER_SEC;
-    double Overall_Time = ((double)clock() - Overall_Begin_Time) / CLOCKS_PER_SEC;
+    auto instance_end = std::chrono::high_resolution_clock::now();
+    double Time = std::chrono::duration<double>(instance_end - Current_Instance_Begin_Time).count();
+    auto overall_end = std::chrono::high_resolution_clock::now();
+    double Overall_Time = std::chrono::duration<double>(overall_end - Overall_Start).count();
 
     vector<int> Solution;
     int Cur_City = Start_City;
@@ -147,7 +153,6 @@ TSP_Result solve(int city_num, double alpha, double beta, double param_h, double
     for (auto &pair : Length_Time)
     {
         pair.first /= Magnify_Rate;
-        pair.second /= CLOCKS_PER_SEC;
     }
 
     if (debug)
@@ -174,7 +179,10 @@ TSP_Result solve(int city_num, double alpha, double beta, double param_h, double
 
     Release_Memory(Virtual_City_Num);
 
-    return TSP_Result{Concorde_Distance, MCTS_Distance, Gap, Time, py::cast(Solution), py::cast(Length_Time)};
+    py::gil_scoped_acquire acquire;
+
+    return TSP_Result{Concorde_Distance,  MCTS_Distance,        Gap, Time, Overall_Time,
+                      py::cast(Solution), py::cast(Length_Time)};
 }
 
 PYBIND11_MODULE(_mcts_cpp, m)
@@ -190,6 +198,7 @@ PYBIND11_MODULE(_mcts_cpp, m)
         .def_readonly("MCTS_Distance", &TSP_Result::MCTS_Distance)
         .def_readonly("Gap", &TSP_Result::Gap)
         .def_readonly("Time", &TSP_Result::Time)
+        .def_readonly("Overall_Time", &TSP_Result::Overall_Time)
         .def_readonly("Solution", &TSP_Result::Solution)
         .def_readonly("Length_Time", &TSP_Result::Length_Time)
         .def("__repr__",
@@ -198,23 +207,25 @@ PYBIND11_MODULE(_mcts_cpp, m)
                  std::string length_time_str = py::str(py::tuple(r.Length_Time)).cast<std::string>();
                  return "TSP_Result(Concorde_Distance=" + std::to_string(r.Concorde_Distance) +
                         ", MCTS_Distance=" + std::to_string(r.MCTS_Distance) + ", Gap=" + std::to_string(r.Gap) +
-                        ", Time=" + std::to_string(r.Time) + ", solution=" + solution_str +
-                        ", length_time=" + length_time_str + ")";
+                        ", Time=" + std::to_string(r.Time) + ", Overall_Time=" + std::to_string(r.Overall_Time) +
+                        ", solution=" + solution_str + ", length_time=" + length_time_str + ")";
              })
         .def(py::pickle(
             [](const TSP_Result &r) { // __getstate__
-                return py::make_tuple(r.Concorde_Distance, r.MCTS_Distance, r.Gap, r.Time, r.Solution, r.Length_Time);
+                return py::make_tuple(r.Concorde_Distance, r.MCTS_Distance, r.Gap, r.Time, r.Overall_Time, r.Solution,
+                                      r.Length_Time);
             },
             [](py::tuple t) { // __setstate__
-                if (t.size() != 6)
+                if (t.size() != 7)
                     throw std::runtime_error("Invalid state!");
                 TSP_Result r;
                 r.Concorde_Distance = t[0].cast<double>();
                 r.MCTS_Distance = t[1].cast<double>();
                 r.Gap = t[2].cast<double>();
                 r.Time = t[3].cast<double>();
-                r.Solution = t[4].cast<py::list>();
-                r.Length_Time = t[5].cast<py::list>();
+                r.Overall_Time = t[4].cast<double>();
+                r.Solution = t[5].cast<py::list>();
+                r.Length_Time = t[6].cast<py::list>();
                 return r;
             }));
 }

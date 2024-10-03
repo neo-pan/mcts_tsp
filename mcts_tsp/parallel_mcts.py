@@ -11,16 +11,10 @@ def parallel_mcts_solve(city_num, distances_list, opt_solutions, heatmaps, num_t
 
     results = []
 
-    with concurrent.futures.ProcessPoolExecutor(max_workers=num_threads) as executor:
+    with concurrent.futures.ThreadPoolExecutor(max_workers=num_threads) as executor:
         futures = [executor.submit(solve_one_instance, *arg) for arg in args]
-        try:
-            for future in concurrent.futures.as_completed(futures):
-                results.append(future.result())
-        except KeyboardInterrupt:
-            print("Process interrupted.")
-            for future in futures:
-                future.cancel()
-            executor.shutdown(wait=False)
+    for future in concurrent.futures.as_completed(futures):
+        results.append(future.result())
 
     concorde_distances = [result.Concorde_Distance for result in results if result is not None]
     mcts_distances = [result.MCTS_Distance for result in results if result is not None]

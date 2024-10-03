@@ -11,25 +11,47 @@ Distance_Type Markov_Decision_Process()
     Generate_Initial_Solution(); // State initialization of MDP
     Local_Search_by_2Opt_Move(); // 2-opt based local search within small
                                  // neighborhood
+
     if (Log_Length_Time)
-        Length_Time.push_back(
-            std::make_pair(Current_Instance_Best_Distance, (double)clock() - Current_Instance_Begin_Time));
-    MCTS(); // Tageted sampling via MCTS within enlarged neighborhood
+    {
+        auto now = std::chrono::high_resolution_clock::now();
+        double elapsed_seconds = std::chrono::duration<double>(now - Current_Instance_Begin_Time).count();
+        Length_Time.push_back(std::make_pair(Current_Instance_Best_Distance, elapsed_seconds));
+    }
+
+    MCTS(); // Targeted sampling via MCTS within enlarged neighborhood
+
     if (Log_Length_Time)
-        Length_Time.push_back(
-            std::make_pair(Current_Instance_Best_Distance, (double)clock() - Current_Instance_Begin_Time));
+    {
+        auto now = std::chrono::high_resolution_clock::now();
+        double elapsed_seconds = std::chrono::duration<double>(now - Current_Instance_Begin_Time).count();
+        Length_Time.push_back(std::make_pair(Current_Instance_Best_Distance, elapsed_seconds));
+    }
+
     // Repeat the following process until termination
-    while (((double)clock() - Current_Instance_Begin_Time) / CLOCKS_PER_SEC < Param_T * Virtual_City_Num)
+    while (
+        std::chrono::duration<double>(std::chrono::high_resolution_clock::now() - Current_Instance_Begin_Time).count() <
+        Param_T * Virtual_City_Num)
     {
         Jump_To_Random_State();
         Local_Search_by_2Opt_Move();
+
         if (Log_Length_Time)
-            Length_Time.push_back(
-                std::make_pair(Current_Instance_Best_Distance, (double)clock() - Current_Instance_Begin_Time));
+        {
+            auto now = std::chrono::high_resolution_clock::now();
+            double elapsed_seconds = std::chrono::duration<double>(now - Current_Instance_Begin_Time).count();
+            Length_Time.push_back(std::make_pair(Current_Instance_Best_Distance, elapsed_seconds));
+        }
+
         MCTS();
+
         if (Log_Length_Time)
-            Length_Time.push_back(
-                std::make_pair(Current_Instance_Best_Distance, (double)clock() - Current_Instance_Begin_Time));
+        {
+            auto now = std::chrono::high_resolution_clock::now();
+            double elapsed_seconds = std::chrono::duration<double>(now - Current_Instance_Begin_Time).count();
+            Length_Time.push_back(std::make_pair(Current_Instance_Best_Distance, elapsed_seconds));
+        }
+
         // Max_Depth = 10 + (rand() % 80);
     }
 

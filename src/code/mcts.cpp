@@ -3,9 +3,9 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 
-#include "TSP_2Opt.h"
-#include "TSP_Basic_Functions.h"
 #include "TSP_IO.h"
+#include "TSP_Basic_Functions.h"
+#include "TSP_2Opt.h"
 #include "TSP_Init.h"
 #include "TSP_MCTS.h"
 #include "TSP_Markov_Decision.h"

@@ -1,12 +1,12 @@
 import concurrent.futures
 from .mcts_wrapper import solve_one_instance
 
-def parallel_mcts_solve(city_num, distances_list, opt_solutions, heatmaps, num_threads, alpha=1, beta=10, param_h=10, param_t=0.1,
+def parallel_mcts_solve(city_num, coordinates_list, opt_solutions, heatmaps, num_threads, alpha=1, beta=10, param_h=10, param_t=0.1,
                         max_candidate_num=5, candidate_use_heatmap=1, max_depth=10, log_len_time=False, debug=False):
 
     args = [
-        (distance, solution, heatmap, city_num, alpha, beta, param_h, param_t, max_candidate_num, candidate_use_heatmap, max_depth, log_len_time, debug)
-        for distance, solution, heatmap in zip(distances_list, opt_solutions, heatmaps)
+        (coordinates, solution, heatmap, city_num, alpha, beta, param_h, param_t, max_candidate_num, candidate_use_heatmap, max_depth, log_len_time, debug)
+        for coordinates, solution, heatmap in zip(coordinates_list, opt_solutions, heatmaps)
     ]
 
     results = []

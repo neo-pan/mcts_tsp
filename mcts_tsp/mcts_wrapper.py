@@ -4,7 +4,7 @@ from typing import List
 from .mcts_types import TSP_Result
 
 def solve_one_instance(
-    distances: np.ndarray,
+    coordinates: np.ndarray,
     opt_solution: np.ndarray,
     heatmap: np.ndarray,
     city_num: int,
@@ -27,7 +27,7 @@ def solve_one_instance(
         max_candidate_num,
         candidate_use_heatmap,
         max_depth,
-        distances,
+        coordinates,
         opt_solution,
         heatmap,
         log_len_time,

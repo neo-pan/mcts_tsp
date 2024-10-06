@@ -4,27 +4,34 @@ int Get_Random_Int(int Divide_Num)
     return rand() % Divide_Num;
 }
 
-// //Calculate the distance between two cities, rounded up to the nearest
-// integer int Calculate_Int_Distance(int First_City,int Second_City)
-// {
-// 	return Distance[First_City][Second_City];
-// }
+//Calculate the distance between two cities, rounded up to the nearest
+int Calculate_Int_Distance(int First_City,int Second_City)
+{
+  	return (int)(0.5 + sqrt( (Coordinate_X[First_City]-Coordinate_X[Second_City])*(Coordinate_X[First_City]-Coordinate_X[Second_City]) +
+                (Coordinate_Y[First_City]-Coordinate_Y[Second_City])*(Coordinate_Y[First_City]-Coordinate_Y[Second_City]) ) );
+}
 
-// //Calculate the distance between two cities
-// double Calculate_Double_Distance(int First_City,int Second_City)
-// {
-// 	return DoubleDistance[First_City][Second_City];
-// }
+//Calculate the distance between two cities
+double Calculate_Double_Distance(int First_City,int Second_City)
+{
+    return sqrt( (Coordinate_X[First_City]-Coordinate_X[Second_City])*(Coordinate_X[First_City]-Coordinate_X[Second_City]) +
+                   (Coordinate_Y[First_City]-Coordinate_Y[Second_City])*(Coordinate_Y[First_City]-Coordinate_Y[Second_City]) );
+}
 
-// // Calculate the distance (integer) between any two cities, stored in
-// Distance[][] void Calculate_All_Pair_Distance()
-// {
-//     // 这个函数现在不需要做任何事情，因为距离已经在读取时存储到 Distance
-//     数组中
-//     // 但我们保留这个函数以保持代码结构一致性
-// }
+// Calculate the distance (integer) between any two cities, stored in Distance[][]
+void Calculate_All_Pair_Distance()
+{
+    for(int i=0;i<Virtual_City_Num;i++)
+        for(int j=0;j<Virtual_City_Num;j++)
+        {
+            if(i!=j)
+                Distance[i][j]=Calculate_Int_Distance(i,j);
+            else
+                Distance[i][j]=Inf_Cost;
+    }
+}
 
-// Fetch the distance (already stored in Distance[][]) between two cities
+// Fetch the distance (already stored in Distance[][]) between two cities 
 Distance_Type Get_Distance(int First_City, int Second_City)
 {
     return Distance[First_City][Second_City];
@@ -144,27 +151,27 @@ Distance_Type Get_Solution_Total_Distance()
 //     return Stored_Solution_Double_Distance;
 // }
 
-float Get_Stored_Solution_Double_Distance()
+double Get_Stored_Solution_Double_Distance()
 {
-    float Stored_Solution_Double_Distance = 0;
+    double Stored_Solution_Double_Distance = 0;
     for (int i = 0; i < Virtual_City_Num - 1; i++)
-        Stored_Solution_Double_Distance += DoubleDistance[Opt_Solution[i]][Opt_Solution[i + 1]];
+        Stored_Solution_Double_Distance += Calculate_Double_Distance(Opt_Solution[i], Opt_Solution[i + 1]);
 
-    Stored_Solution_Double_Distance += DoubleDistance[Opt_Solution[Virtual_City_Num - 1]][Opt_Solution[0]];
+    Stored_Solution_Double_Distance += Calculate_Double_Distance(Opt_Solution[Virtual_City_Num - 1], Opt_Solution[0]);
     return Stored_Solution_Double_Distance;
 }
 
 // For TSP20-50-100 instances
 //  Return the total distance (double) of the solution stored in Struct_Node
 //  *All_Node
-float Get_Current_Solution_Double_Distance()
+double Get_Current_Solution_Double_Distance()
 {
-    float Current_Solution_Double_Distance = 0;
+    double Current_Solution_Double_Distance = 0;
     for (int i = 0; i < Virtual_City_Num; i++)
     {
         int Temp_Next_City = All_Node[i].Next_City;
         if (Temp_Next_City != Null)
-            Current_Solution_Double_Distance += DoubleDistance[i][Temp_Next_City];
+            Current_Solution_Double_Distance += Calculate_Double_Distance(i, Temp_Next_City);
         else
         {
             printf("\nGet_Current_Solution_Double_Distance() fail!\n");

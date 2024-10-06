@@ -296,7 +296,7 @@ void MCTS()
 {
     // while(true)
     while (
-        std::chrono::duration<float>(std::chrono::high_resolution_clock::now() - Current_Instance_Begin_Time).count() <
+        std::chrono::duration<double>(std::chrono::high_resolution_clock::now() - Current_Instance_Begin_Time).count() <
         Param_T * Virtual_City_Num)
     {
         Distance_Type Before_Simulation_Distance = Get_Solution_Total_Distance();

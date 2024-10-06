@@ -19,11 +19,12 @@ int Total_Instance_Num = 1;
 #define Magnify_Rate 100000
 #define Max_Inst_Num 1 // to be modified
 #define Max_City_Num 10000
+#define Coord_Dim 2
 // Hyper parameters
-thread_local float Alpha = 1;              // used in estimating the potential of each edge
-thread_local float Beta = 10;              // used in back propagation
-thread_local float Param_H = 10;           // used to control the number of sampling actions
-thread_local float Param_T = 0.10;         // used to control the termination condition
+thread_local double Alpha = 1;              // used in estimating the potential of each edge
+thread_local double Beta = 10;              // used in back propagation
+thread_local double Param_H = 10;           // used to control the number of sampling actions
+thread_local double Param_T = 0.10;         // used to control the termination condition
 thread_local int Max_Candidate_Num = 5;     // used to control the number of candidate neighbors of each city
 thread_local int Candidate_Use_Heatmap = 1; // used to control whether to use the heatmap information
 thread_local int Max_Depth = 10;            // used to control the depth of the search tree
@@ -79,12 +80,13 @@ thread_local int Start_City;
 thread_local int Salesman_Num; // This program was proposed for the multiple TSP. If
                                // Salesman_Num=1, it reduces to the TSP
 thread_local int Virtual_City_Num;
-thread_local float **DoubleDistance;
+thread_local double *Coordinate_X;
+thread_local double *Coordinate_Y;
 thread_local Distance_Type **Distance;
 thread_local int *Opt_Solution;
 
 // Store the length-time information
-thread_local vector<std::pair<float, float>> Length_Time;
+thread_local vector<std::pair<double, double>> Length_Time;
 
 thread_local std::chrono::high_resolution_clock::time_point Current_Instance_Begin_Time;
 thread_local Distance_Type Current_Instance_Best_Distance;
@@ -131,9 +133,8 @@ void Convert_Solution_To_All_Node();
 
 void Allocate_Memory(int City_Num)
 {
-    DoubleDistance = new float *[City_Num];
-    for (int i = 0; i < City_Num; i++)
-        DoubleDistance[i] = new float[City_Num];
+    Coordinate_X = new double [City_Num];
+    Coordinate_Y = new double [City_Num];
 
     Distance = new Distance_Type *[City_Num];
     for (int i = 0; i < City_Num; i++)
@@ -174,10 +175,6 @@ void Allocate_Memory(int City_Num)
 
 void Release_Memory(int City_Num)
 {
-    for (int i = 0; i < City_Num; i++)
-        delete[] DoubleDistance[i];
-    delete[] DoubleDistance;
-
     for (int i = 0; i < City_Num; i++)
         delete[] Distance[i];
     delete[] Distance;

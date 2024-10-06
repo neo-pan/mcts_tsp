@@ -14,18 +14,18 @@ namespace py = pybind11;
 
 struct TSP_Result
 {
-    float Concorde_Distance;
-    float MCTS_Distance;
-    float Gap;
-    float Time;
-    float Overall_Time;
+    double Concorde_Distance;
+    double MCTS_Distance;
+    double Gap;
+    double Time;
+    double Overall_Time;
     py::list Solution;
     py::list Length_Time;
 };
 
-TSP_Result solve(int city_num, float alpha, float beta, float param_h, float param_t, int max_candidate_num,
-                 int candidate_use_heatmap, int max_depth, py::array_t<float> distances, py::array_t<int> opt_solution,
-                 py::array_t<float> heatmap, bool log_len_time, bool debug)
+TSP_Result solve(int city_num, double alpha, double beta, double param_h, double param_t, int max_candidate_num,
+                 int candidate_use_heatmap, int max_depth, py::array_t<double> coordinates, py::array_t<int> opt_solution,
+                 py::array_t<double> heatmap, bool log_len_time, bool debug)
 {
     auto Overall_Start = std::chrono::high_resolution_clock::now();
     srand(Random_Seed);
@@ -61,14 +61,14 @@ TSP_Result solve(int city_num, float alpha, float beta, float param_h, float par
 
     Allocate_Memory(Virtual_City_Num);
     // Assert that distances has the correct shape
-    auto distances_shape = distances.shape();
+    auto coordinates_shape = coordinates.shape();
     auto solution_shape = opt_solution.shape();
     auto heatmap_shape = heatmap.shape();
 
     // Size check and dimension check for numpy arrays
-    if (distances.ndim() != 2 || distances_shape[0] != distances_shape[1] || distances_shape[0] != Virtual_City_Num)
+    if (coordinates.ndim() != 2 || coordinates_shape[0] != Virtual_City_Num || coordinates_shape[1] != Coord_Dim)
     {
-        throw std::runtime_error("Invalid distances array shape or dimensions");
+        throw std::runtime_error("Invalid coordinates array shape or dimensions");
     }
 
     if (opt_solution.ndim() != 1 || solution_shape[0] != Virtual_City_Num)
@@ -82,22 +82,11 @@ TSP_Result solve(int city_num, float alpha, float beta, float param_h, float par
     }
 
     // Fill in the matrix
-    auto distances_r = distances.unchecked<2>();
+    auto coordinates_r = coordinates.unchecked<2>();
     for (int i = 0; i < Virtual_City_Num; i++)
     {
-        for (int j = 0; j < Virtual_City_Num; j++)
-        {
-            if (i != j)
-            {
-                Distance[i][j] = distances_r(i, j) * Magnify_Rate;
-                DoubleDistance[i][j] = distances_r(i, j) * Magnify_Rate;
-            }
-            else
-            {
-                Distance[i][j] = Inf_Cost;
-                DoubleDistance[i][j] = Inf_Cost;
-            }
-        }
+        Coordinate_X[i] = coordinates_r(i, 0) * Magnify_Rate;
+        Coordinate_Y[i] = coordinates_r(i, 1) * Magnify_Rate;
     }
 
     auto solution_r = opt_solution.unchecked<1>();
@@ -117,6 +106,7 @@ TSP_Result solve(int city_num, float alpha, float beta, float param_h, float par
 
     py::gil_scoped_release release;
 
+    Calculate_All_Pair_Distance();
     for (int i = 0; i < City_Num; i++)
     {
         for (int j = i + 1; j < City_Num; j++)
@@ -132,15 +122,15 @@ TSP_Result solve(int city_num, float alpha, float beta, float param_h, float par
     Identify_Candidate_Set();
     Markov_Decision_Process();
 
-    float Stored_Solution_Double_Distance = Get_Stored_Solution_Double_Distance();
-    float Current_Solution_Double_Distance = Get_Current_Solution_Double_Distance();
-    float Concorde_Distance = Stored_Solution_Double_Distance / Magnify_Rate;
-    float MCTS_Distance = Current_Solution_Double_Distance / Magnify_Rate;
-    float Gap = (Current_Solution_Double_Distance - Stored_Solution_Double_Distance) / Stored_Solution_Double_Distance;
+    double Stored_Solution_Double_Distance = Get_Stored_Solution_Double_Distance();
+    double Current_Solution_Double_Distance = Get_Current_Solution_Double_Distance();
+    double Concorde_Distance = Stored_Solution_Double_Distance / Magnify_Rate;
+    double MCTS_Distance = Current_Solution_Double_Distance / Magnify_Rate;
+    double Gap = (Current_Solution_Double_Distance - Stored_Solution_Double_Distance) / Stored_Solution_Double_Distance;
     auto instance_end = std::chrono::high_resolution_clock::now();
-    float Time = std::chrono::duration<float>(instance_end - Current_Instance_Begin_Time).count();
+    double Time = std::chrono::duration<double>(instance_end - Current_Instance_Begin_Time).count();
     auto overall_end = std::chrono::high_resolution_clock::now();
-    float Overall_Time = std::chrono::duration<float>(overall_end - Overall_Start).count();
+    double Overall_Time = std::chrono::duration<double>(overall_end - Overall_Start).count();
 
     vector<int> Solution;
     int Cur_City = Start_City;
@@ -189,7 +179,7 @@ PYBIND11_MODULE(_mcts_cpp, m)
 {
     m.def("solve", &solve, "A function to solve TSP using MCTS", py::arg("city_num"), py::arg("alpha"), py::arg("beta"),
           py::arg("param_h"), py::arg("param_t"), py::arg("max_candidate_num"), py::arg("candidate_use_heatmap"),
-          py::arg("max_depth"), py::arg("distances"), py::arg("opt_solution"), py::arg("heatmap"),
+          py::arg("max_depth"), py::arg("coordinates"), py::arg("opt_solution"), py::arg("heatmap"),
           py::arg("log_len_time") = false, py::arg("debug") = false);
 
     py::class_<TSP_Result>(m, "TSP_Result")
@@ -219,11 +209,11 @@ PYBIND11_MODULE(_mcts_cpp, m)
                 if (t.size() != 7)
                     throw std::runtime_error("Invalid state!");
                 TSP_Result r;
-                r.Concorde_Distance = t[0].cast<float>();
-                r.MCTS_Distance = t[1].cast<float>();
-                r.Gap = t[2].cast<float>();
-                r.Time = t[3].cast<float>();
-                r.Overall_Time = t[4].cast<float>();
+                r.Concorde_Distance = t[0].cast<double>();
+                r.MCTS_Distance = t[1].cast<double>();
+                r.Gap = t[2].cast<double>();
+                r.Time = t[3].cast<double>();
+                r.Overall_Time = t[4].cast<double>();
                 r.Solution = t[5].cast<py::list>();
                 r.Length_Time = t[6].cast<py::list>();
                 return r;

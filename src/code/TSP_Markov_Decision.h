@@ -15,7 +15,7 @@ Distance_Type Markov_Decision_Process()
     if (Log_Length_Time)
     {
         auto now = std::chrono::high_resolution_clock::now();
-        float elapsed_seconds = std::chrono::duration<float>(now - Current_Instance_Begin_Time).count();
+        double elapsed_seconds = std::chrono::duration<double>(now - Current_Instance_Begin_Time).count();
         Length_Time.push_back(std::make_pair(Current_Instance_Best_Distance, elapsed_seconds));
     }
 
@@ -24,13 +24,13 @@ Distance_Type Markov_Decision_Process()
     if (Log_Length_Time)
     {
         auto now = std::chrono::high_resolution_clock::now();
-        float elapsed_seconds = std::chrono::duration<float>(now - Current_Instance_Begin_Time).count();
+        double elapsed_seconds = std::chrono::duration<double>(now - Current_Instance_Begin_Time).count();
         Length_Time.push_back(std::make_pair(Current_Instance_Best_Distance, elapsed_seconds));
     }
 
     // Repeat the following process until termination
     while (
-        std::chrono::duration<float>(std::chrono::high_resolution_clock::now() - Current_Instance_Begin_Time).count() <
+        std::chrono::duration<double>(std::chrono::high_resolution_clock::now() - Current_Instance_Begin_Time).count() <
         Param_T * Virtual_City_Num)
     {
         Jump_To_Random_State();
@@ -39,7 +39,7 @@ Distance_Type Markov_Decision_Process()
         if (Log_Length_Time)
         {
             auto now = std::chrono::high_resolution_clock::now();
-            float elapsed_seconds = std::chrono::duration<float>(now - Current_Instance_Begin_Time).count();
+            double elapsed_seconds = std::chrono::duration<double>(now - Current_Instance_Begin_Time).count();
             Length_Time.push_back(std::make_pair(Current_Instance_Best_Distance, elapsed_seconds));
         }
 
@@ -48,7 +48,7 @@ Distance_Type Markov_Decision_Process()
         if (Log_Length_Time)
         {
             auto now = std::chrono::high_resolution_clock::now();
-            float elapsed_seconds = std::chrono::duration<float>(now - Current_Instance_Begin_Time).count();
+            double elapsed_seconds = std::chrono::duration<double>(now - Current_Instance_Begin_Time).count();
             Length_Time.push_back(std::make_pair(Current_Instance_Best_Distance, elapsed_seconds));
         }
 

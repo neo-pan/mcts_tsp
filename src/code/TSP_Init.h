@@ -1,5 +1,5 @@
 // Estimate the potential of each edge by upper bound confidence function
-double Temp_Get_Potential(int First_City, int Second_City)
+float Temp_Get_Potential(int First_City, int Second_City)
 {
     // double Potential=Weight[First_City][Second_City]/Avg_Weight+Alpha*sqrt(
     // log(Total_Simulation_Times+1) / (
@@ -29,7 +29,7 @@ bool Temp_Get_Probabilistic(int Cur_City)
     if (Promising_City_Num == 0)
         return false;
 
-    double Total_Potential = 0;
+    float Total_Potential = 0;
     for (int i = 0; i < Promising_City_Num; i++)
         Total_Potential += Temp_Get_Potential(Cur_City, Promising_City[i]);
 

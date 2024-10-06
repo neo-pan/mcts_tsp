@@ -16,14 +16,14 @@ int Total_Instance_Num = 1;
 
 #define Null -1
 #define Inf_Cost 1000000000
-#define Magnify_Rate 10000
+#define Magnify_Rate 100000
 #define Max_Inst_Num 1 // to be modified
 #define Max_City_Num 10000
 // Hyper parameters
-thread_local double Alpha = 1;              // used in estimating the potential of each edge
-thread_local double Beta = 10;              // used in back propagation
-thread_local double Param_H = 10;           // used to control the number of sampling actions
-thread_local double Param_T = 0.10;         // used to control the termination condition
+thread_local float Alpha = 1;              // used in estimating the potential of each edge
+thread_local float Beta = 10;              // used in back propagation
+thread_local float Param_H = 10;           // used to control the number of sampling actions
+thread_local float Param_T = 0.10;         // used to control the termination condition
 thread_local int Max_Candidate_Num = 5;     // used to control the number of candidate neighbors of each city
 thread_local int Candidate_Use_Heatmap = 1; // used to control whether to use the heatmap information
 thread_local int Max_Depth = 10;            // used to control the depth of the search tree
@@ -79,12 +79,12 @@ thread_local int Start_City;
 thread_local int Salesman_Num; // This program was proposed for the multiple TSP. If
                                // Salesman_Num=1, it reduces to the TSP
 thread_local int Virtual_City_Num;
-thread_local double **DoubleDistance;
+thread_local float **DoubleDistance;
 thread_local Distance_Type **Distance;
 thread_local int *Opt_Solution;
 
 // Store the length-time information
-thread_local vector<std::pair<double, double>> Length_Time;
+thread_local vector<std::pair<float, float>> Length_Time;
 
 thread_local std::chrono::high_resolution_clock::time_point Current_Instance_Begin_Time;
 thread_local Distance_Type Current_Instance_Best_Distance;
@@ -117,9 +117,9 @@ thread_local Distance_Type *Gain;
 thread_local Distance_Type *Real_Gain;
 
 // Used in MCTS
-thread_local double **Edge_Heatmap;
-thread_local double **Weight;
-thread_local double Avg_Weight;
+thread_local float **Edge_Heatmap;
+thread_local float **Weight;
+thread_local float Avg_Weight;
 thread_local int **Chosen_Times;
 thread_local int *Promising_City;
 thread_local int *Probabilistic;
@@ -131,9 +131,9 @@ void Convert_Solution_To_All_Node();
 
 void Allocate_Memory(int City_Num)
 {
-    DoubleDistance = new double *[City_Num];
+    DoubleDistance = new float *[City_Num];
     for (int i = 0; i < City_Num; i++)
-        DoubleDistance[i] = new double[City_Num];
+        DoubleDistance[i] = new float[City_Num];
 
     Distance = new Distance_Type *[City_Num];
     for (int i = 0; i < City_Num; i++)
@@ -156,13 +156,13 @@ void Allocate_Memory(int City_Num)
     Gain = new Distance_Type[2 * City_Num];
     Real_Gain = new Distance_Type[2 * City_Num];
 
-    Edge_Heatmap = new double *[City_Num];
+    Edge_Heatmap = new float *[City_Num];
     for (int i = 0; i < City_Num; i++)
-        Edge_Heatmap[i] = new double[City_Num];
+        Edge_Heatmap[i] = new float[City_Num];
 
-    Weight = new double *[City_Num];
+    Weight = new float *[City_Num];
     for (int i = 0; i < City_Num; i++)
-        Weight[i] = new double[City_Num];
+        Weight[i] = new float[City_Num];
 
     Chosen_Times = new int *[City_Num];
     for (int i = 0; i < City_Num; i++)

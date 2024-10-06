@@ -38,7 +38,7 @@ void Apply_2Opt_Move(int First_City, int Second_City)
 
     // Update the values of matrix Weight[][] by back propagation, which would
     // be used in MCTS
-    double Increase_Rate = Beta * (pow(2.718, (double)(Delta) / (double)(Before_Distance)) - 1);
+    float Increase_Rate = Beta * (pow(2.718, (float)(Delta) / (float)(Before_Distance)) - 1);
 
     Weight[First_City][Second_City] += Increase_Rate;
     Weight[Second_City][First_City] += Increase_Rate;

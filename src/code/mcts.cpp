@@ -14,18 +14,18 @@ namespace py = pybind11;
 
 struct TSP_Result
 {
-    double Concorde_Distance;
-    double MCTS_Distance;
-    double Gap;
-    double Time;
-    double Overall_Time;
+    float Concorde_Distance;
+    float MCTS_Distance;
+    float Gap;
+    float Time;
+    float Overall_Time;
     py::list Solution;
     py::list Length_Time;
 };
 
-TSP_Result solve(int city_num, double alpha, double beta, double param_h, double param_t, int max_candidate_num,
-                 int candidate_use_heatmap, int max_depth, py::array_t<double> distances, py::array_t<int> opt_solution,
-                 py::array_t<double> heatmap, bool log_len_time, bool debug)
+TSP_Result solve(int city_num, float alpha, float beta, float param_h, float param_t, int max_candidate_num,
+                 int candidate_use_heatmap, int max_depth, py::array_t<float> distances, py::array_t<int> opt_solution,
+                 py::array_t<float> heatmap, bool log_len_time, bool debug)
 {
     auto Overall_Start = std::chrono::high_resolution_clock::now();
     srand(Random_Seed);
@@ -132,15 +132,15 @@ TSP_Result solve(int city_num, double alpha, double beta, double param_h, double
     Identify_Candidate_Set();
     Markov_Decision_Process();
 
-    double Stored_Solution_Double_Distance = Get_Stored_Solution_Double_Distance();
-    double Current_Solution_Double_Distance = Get_Current_Solution_Double_Distance();
-    double Concorde_Distance = Stored_Solution_Double_Distance / Magnify_Rate;
-    double MCTS_Distance = Current_Solution_Double_Distance / Magnify_Rate;
-    double Gap = (Current_Solution_Double_Distance - Stored_Solution_Double_Distance) / Stored_Solution_Double_Distance;
+    float Stored_Solution_Double_Distance = Get_Stored_Solution_Double_Distance();
+    float Current_Solution_Double_Distance = Get_Current_Solution_Double_Distance();
+    float Concorde_Distance = Stored_Solution_Double_Distance / Magnify_Rate;
+    float MCTS_Distance = Current_Solution_Double_Distance / Magnify_Rate;
+    float Gap = (Current_Solution_Double_Distance - Stored_Solution_Double_Distance) / Stored_Solution_Double_Distance;
     auto instance_end = std::chrono::high_resolution_clock::now();
-    double Time = std::chrono::duration<double>(instance_end - Current_Instance_Begin_Time).count();
+    float Time = std::chrono::duration<float>(instance_end - Current_Instance_Begin_Time).count();
     auto overall_end = std::chrono::high_resolution_clock::now();
-    double Overall_Time = std::chrono::duration<double>(overall_end - Overall_Start).count();
+    float Overall_Time = std::chrono::duration<float>(overall_end - Overall_Start).count();
 
     vector<int> Solution;
     int Cur_City = Start_City;
@@ -219,11 +219,11 @@ PYBIND11_MODULE(_mcts_cpp, m)
                 if (t.size() != 7)
                     throw std::runtime_error("Invalid state!");
                 TSP_Result r;
-                r.Concorde_Distance = t[0].cast<double>();
-                r.MCTS_Distance = t[1].cast<double>();
-                r.Gap = t[2].cast<double>();
-                r.Time = t[3].cast<double>();
-                r.Overall_Time = t[4].cast<double>();
+                r.Concorde_Distance = t[0].cast<float>();
+                r.MCTS_Distance = t[1].cast<float>();
+                r.Gap = t[2].cast<float>();
+                r.Time = t[3].cast<float>();
+                r.Overall_Time = t[4].cast<float>();
                 r.Solution = t[5].cast<py::list>();
                 r.Length_Time = t[6].cast<py::list>();
                 return r;

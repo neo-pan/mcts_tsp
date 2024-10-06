@@ -19,9 +19,9 @@ void MCTS_Init()
 }
 
 // Get the average weight of all the edge relative to Cur_City
-double Get_Avg_Weight(int Cur_City)
+float Get_Avg_Weight(int Cur_City)
 {
-    double Total_Weight = 0;
+    float Total_Weight = 0;
     for (int i = 0; i < Virtual_City_Num; i++)
     {
         if (i == Cur_City)
@@ -34,9 +34,9 @@ double Get_Avg_Weight(int Cur_City)
 }
 
 // Estimate the potential of each edge by upper bound confidence function
-double Get_Potential(int First_City, int Second_City)
+float Get_Potential(int First_City, int Second_City)
 {
-    double Potential =
+    float Potential =
         Weight[First_City][Second_City] / Avg_Weight +
         Alpha * sqrt(log(Total_Simulation_Times + 1) / (log(2.718) * (Chosen_Times[First_City][Second_City] + 1)));
 
@@ -69,7 +69,7 @@ bool Get_Probabilistic(int Cur_City)
     if (Promising_City_Num == 0)
         return false;
 
-    double Total_Potential = 0;
+    float Total_Potential = 0;
     for (int i = 0; i < Promising_City_Num; i++)
         Total_Potential += Get_Potential(Cur_City, Promising_City[i]);
 
@@ -213,8 +213,8 @@ void Back_Propagation(Distance_Type Before_Simulation_Distance, Distance_Type Ac
 
         if (Action_Delta > 0)
         {
-            double Increase_Rate =
-                Beta * (pow(2.718, (double)(Action_Delta) / (double)(Before_Simulation_Distance)) - 1);
+            float Increase_Rate =
+                Beta * (pow(2.718, (float)(Action_Delta) / (float)(Before_Simulation_Distance)) - 1);
             Weight[Second_City][Third_City] += Increase_Rate;
             Weight[Third_City][Second_City] += Increase_Rate;
         }
@@ -296,7 +296,7 @@ void MCTS()
 {
     // while(true)
     while (
-        std::chrono::duration<double>(std::chrono::high_resolution_clock::now() - Current_Instance_Begin_Time).count() <
+        std::chrono::duration<float>(std::chrono::high_resolution_clock::now() - Current_Instance_Begin_Time).count() <
         Param_T * Virtual_City_Num)
     {
         Distance_Type Before_Simulation_Distance = Get_Solution_Total_Distance();

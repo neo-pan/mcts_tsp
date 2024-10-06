@@ -16,7 +16,7 @@ int Total_Instance_Num = 1;
 
 #define Null -1
 #define Inf_Cost 1000000000
-#define Magnify_Rate 100000
+#define Magnify_Rate 1000000
 #define Max_Inst_Num 1 // to be modified
 #define Max_City_Num 10000
 #define Coord_Dim 2

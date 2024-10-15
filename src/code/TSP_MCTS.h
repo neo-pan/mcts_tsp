@@ -213,8 +213,7 @@ void Back_Propagation(Distance_Type Before_Simulation_Distance, Distance_Type Ac
 
         if (Action_Delta > 0)
         {
-            float Increase_Rate =
-                Beta * (pow(2.718, (float)(Action_Delta) / (float)(Before_Simulation_Distance)) - 1);
+            float Increase_Rate = Beta * (pow(2.718, (float)(Action_Delta) / (float)(Before_Simulation_Distance)) - 1);
             Weight[Second_City][Third_City] += Increase_Rate;
             Weight[Third_City][Second_City] += Increase_Rate;
         }
@@ -295,9 +294,7 @@ bool Execute_Best_Action()
 void MCTS()
 {
     // while(true)
-    while (
-        std::chrono::duration<double>(std::chrono::high_resolution_clock::now() - Current_Instance_Begin_Time).count() <
-        Param_T * Virtual_City_Num)
+    while (Get_Elapsed_Time(Current_Instance_Begin_Time) < Param_T * Virtual_City_Num)
     {
         Distance_Type Before_Simulation_Distance = Get_Solution_Total_Distance();
 

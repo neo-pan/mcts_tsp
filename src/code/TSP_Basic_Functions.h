@@ -4,34 +4,38 @@ int Get_Random_Int(int Divide_Num)
     return rand() % Divide_Num;
 }
 
-//Calculate the distance between two cities, rounded up to the nearest
-int Calculate_Int_Distance(int First_City,int Second_City)
+// Calculate the distance between two cities, rounded up to the nearest
+int Calculate_Int_Distance(int First_City, int Second_City)
 {
-  	return (int)(0.5 + sqrt( (Coordinate_X[First_City]-Coordinate_X[Second_City])*(Coordinate_X[First_City]-Coordinate_X[Second_City]) +
-                (Coordinate_Y[First_City]-Coordinate_Y[Second_City])*(Coordinate_Y[First_City]-Coordinate_Y[Second_City]) ) );
+    return (int)(0.5 + sqrt((Coordinate_X[First_City] - Coordinate_X[Second_City]) *
+                                (Coordinate_X[First_City] - Coordinate_X[Second_City]) +
+                            (Coordinate_Y[First_City] - Coordinate_Y[Second_City]) *
+                                (Coordinate_Y[First_City] - Coordinate_Y[Second_City])));
 }
 
-//Calculate the distance between two cities
-double Calculate_Double_Distance(int First_City,int Second_City)
+// Calculate the distance between two cities
+double Calculate_Double_Distance(int First_City, int Second_City)
 {
-    return sqrt( (Coordinate_X[First_City]-Coordinate_X[Second_City])*(Coordinate_X[First_City]-Coordinate_X[Second_City]) +
-                   (Coordinate_Y[First_City]-Coordinate_Y[Second_City])*(Coordinate_Y[First_City]-Coordinate_Y[Second_City]) );
+    return sqrt((Coordinate_X[First_City] - Coordinate_X[Second_City]) *
+                    (Coordinate_X[First_City] - Coordinate_X[Second_City]) +
+                (Coordinate_Y[First_City] - Coordinate_Y[Second_City]) *
+                    (Coordinate_Y[First_City] - Coordinate_Y[Second_City]));
 }
 
 // Calculate the distance (integer) between any two cities, stored in Distance[][]
 void Calculate_All_Pair_Distance()
 {
-    for(int i=0;i<Virtual_City_Num;i++)
-        for(int j=0;j<Virtual_City_Num;j++)
+    for (int i = 0; i < Virtual_City_Num; i++)
+        for (int j = 0; j < Virtual_City_Num; j++)
         {
-            if(i!=j)
-                Distance[i][j]=Calculate_Int_Distance(i,j);
+            if (i != j)
+                Distance[i][j] = Calculate_Int_Distance(i, j);
             else
-                Distance[i][j]=Inf_Cost;
-    }
+                Distance[i][j] = Inf_Cost;
+        }
 }
 
-// Fetch the distance (already stored in Distance[][]) between two cities 
+// Fetch the distance (already stored in Distance[][]) between two cities
 Distance_Type Get_Distance(int First_City, int Second_City)
 {
     return Distance[First_City][Second_City];

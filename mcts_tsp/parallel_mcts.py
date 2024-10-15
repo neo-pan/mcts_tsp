@@ -11,7 +11,7 @@ def parallel_mcts_solve(city_num, coordinates_list, opt_solutions, heatmaps, num
 
     results = []
 
-    with concurrent.futures.ThreadPoolExecutor(max_workers=num_threads) as executor:
+    with concurrent.futures.ProcessPoolExecutor(max_workers=num_threads) as executor:
         futures = [executor.submit(solve_one_instance, *arg) for arg in args]
     for future in concurrent.futures.as_completed(futures):
         results.append(future.result())
@@ -20,7 +20,8 @@ def parallel_mcts_solve(city_num, coordinates_list, opt_solutions, heatmaps, num
     mcts_distances = [result.MCTS_Distance for result in results if result is not None]
     gaps = [result.Gap for result in results if result is not None]
     times = [result.Time for result in results if result is not None]
+    overall_times = [result.Overall_Time for result in results if result is not None]
     solutions = [result.Solution for result in results if result is not None]
     lengths_times = [result.Length_Time for result in results if result is not None]
 
-    return concorde_distances, mcts_distances, gaps, times, solutions, lengths_times
+    return concorde_distances, mcts_distances, gaps, times, overall_times, solutions, lengths_times

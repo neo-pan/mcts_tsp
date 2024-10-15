@@ -13,7 +13,7 @@ def test_parallel_mcts_solve(coordinates_list, opt_solutions, heatmaps, city_num
     print("\nTesting parallel_mcts_solve:")
     start_time = time.time()
     
-    concorde_distances, mcts_distances, gaps, times, solutions, lengths_times = mcts_tsp.parallel_mcts_solve(
+    concorde_distances, mcts_distances, gaps, times, overall_times, solutions, lengths_times = mcts_tsp.parallel_mcts_solve(
         city_num=city_num,
         coordinates_list=coordinates_list,
         opt_solutions=opt_solutions,
@@ -22,7 +22,7 @@ def test_parallel_mcts_solve(coordinates_list, opt_solutions, heatmaps, city_num
         alpha=1,
         beta=10,
         param_h=10,
-        param_t=100./city_num,
+        param_t=10./city_num,
         max_candidate_num=5,
         candidate_use_heatmap=1,
         max_depth=10,
@@ -36,6 +36,7 @@ def test_parallel_mcts_solve(coordinates_list, opt_solutions, heatmaps, city_num
     print(f"Average MCTS Distance: {np.mean(mcts_distances):.2f}")
     print(f"Average Gap: {np.mean(gaps) * 100:.2f}%")
     print(f"Average Time per Instance: {np.mean(times):.2f} seconds")
+    print(f"Average Overall Time per Instance: {np.mean(overall_times):.2f} seconds")
     print(f"Total Time: {total_time:.2f} seconds")
     print(f"Length Time: {len(lengths_times)} instances")
     for i, length_time in enumerate(lengths_times):

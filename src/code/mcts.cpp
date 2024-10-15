@@ -1,4 +1,3 @@
-#include <chrono>
 #include <pybind11/numpy.h>
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
@@ -24,10 +23,10 @@ struct TSP_Result
 };
 
 TSP_Result solve(int city_num, double alpha, double beta, double param_h, double param_t, int max_candidate_num,
-                 int candidate_use_heatmap, int max_depth, py::array_t<double> coordinates, py::array_t<int> opt_solution,
-                 py::array_t<double> heatmap, bool log_len_time, bool debug)
+                 int candidate_use_heatmap, int max_depth, py::array_t<double> coordinates,
+                 py::array_t<int> opt_solution, py::array_t<double> heatmap, bool log_len_time, bool debug)
 {
-    auto Overall_Start = std::chrono::high_resolution_clock::now();
+    auto Overall_Start = std::chrono::steady_clock::now();
     srand(Random_Seed);
 
     // Initialize parameters
@@ -116,7 +115,7 @@ TSP_Result solve(int city_num, double alpha, double beta, double param_h, double
         }
     }
 
-    Current_Instance_Begin_Time = std::chrono::high_resolution_clock::now();
+    Current_Instance_Begin_Time = std::chrono::steady_clock::now();
     Current_Instance_Best_Distance = Inf_Cost;
 
     Identify_Candidate_Set();
@@ -127,10 +126,8 @@ TSP_Result solve(int city_num, double alpha, double beta, double param_h, double
     double Concorde_Distance = Stored_Solution_Double_Distance / Magnify_Rate;
     double MCTS_Distance = Current_Solution_Double_Distance / Magnify_Rate;
     double Gap = (Current_Solution_Double_Distance - Stored_Solution_Double_Distance) / Stored_Solution_Double_Distance;
-    auto instance_end = std::chrono::high_resolution_clock::now();
-    double Time = std::chrono::duration<double>(instance_end - Current_Instance_Begin_Time).count();
-    auto overall_end = std::chrono::high_resolution_clock::now();
-    double Overall_Time = std::chrono::duration<double>(overall_end - Overall_Start).count();
+    double Time = Get_Elapsed_Time(Current_Instance_Begin_Time);
+    double Overall_Time = Get_Elapsed_Time(Overall_Start);
 
     vector<int> Solution;
     int Cur_City = Start_City;

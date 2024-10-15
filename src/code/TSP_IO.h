@@ -5,7 +5,6 @@
 #include <time.h>
 
 #include <chrono>
-#include <ctime>
 #include <fstream>
 #include <iostream>
 #include <sstream>
@@ -88,7 +87,7 @@ thread_local int *Opt_Solution;
 // Store the length-time information
 thread_local vector<std::pair<double, double>> Length_Time;
 
-thread_local std::chrono::high_resolution_clock::time_point Current_Instance_Begin_Time;
+thread_local std::chrono::steady_clock::time_point Current_Instance_Begin_Time;
 thread_local Distance_Type Current_Instance_Best_Distance;
 
 // Used to store a solution in double link
@@ -133,8 +132,8 @@ void Convert_Solution_To_All_Node();
 
 void Allocate_Memory(int City_Num)
 {
-    Coordinate_X = new double [City_Num];
-    Coordinate_Y = new double [City_Num];
+    Coordinate_X = new double[City_Num];
+    Coordinate_Y = new double[City_Num];
 
     Distance = new Distance_Type *[City_Num];
     for (int i = 0; i < City_Num; i++)
@@ -509,4 +508,13 @@ bool Read_Heatmap()
             Edge_Heatmap[i][j] = (Edge_Heatmap[i][j] + Edge_Heatmap[j][i]) / 2;
             Edge_Heatmap[j][i] = Edge_Heatmap[i][j];
         }
+}
+
+double Get_Elapsed_Time(std::chrono::steady_clock::time_point Begin_Time)
+{
+    auto Current_Time = std::chrono::steady_clock::now();
+
+    std::chrono::duration<double> elapsed_seconds = Current_Time - Begin_Time;
+
+    return elapsed_seconds.count();
 }

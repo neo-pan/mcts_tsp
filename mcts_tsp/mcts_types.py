@@ -7,5 +7,6 @@ class TSP_Result:
     MCTS_Distance: float
     Gap: float
     Time: float
+    Overall_Time: float
     Solution: List[int]
     Length_Time: List[Tuple[float, float]]

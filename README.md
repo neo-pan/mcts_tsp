@@ -15,57 +15,20 @@ This package provides one main function:
 ### parallel_mcts_solve
 
 Solves multiple TSP instances in parallel using MCTS.
+> **Notice**  
+> It is recommended to normalize the coordinates to the range [0, 1] for better performance.  
+> Please note that the indices of `opt_solutions` and the returned `solutions` are 0-based (i.e., start from 0).
 
 ```python
 import numpy as np
 from mcts_tsp import parallel_mcts_solve
 
-coordinates = np.array([
-    # Coordinates for problem 1 (3 cities)
-    [
-        [1, 1],  # City 1
-        [2, 2],  # City 2
-        [1, 2],  # City 3
-    ],
-    # Coordinates for problem 2 (3 cities)
-    [
-        [0, 0],
-        [3, 0],
-        [1, 4],
-    ],
-    # Coordinates for problem 3 (3 cities)
-    [
-        [1, 3],
-        [2, 1],
-        [3, 2],
-    ]
-],)
-
-opt_solutions = np.array([
-    np.array([1, 2, 3]),  # Optimal solution for problem 1
-    np.array([1, 3, 2]),  # Optimal solution for problem 2
-    np.array([2, 1, 3])   # Optimal solution for problem 3
-])
-
-heatmaps = np.array([[ # Heatmap for problem 1
-    [0.1, 0.2, 0.3],
-    [0.2, 0.3, 0.4],
-    [0.3, 0.4, 0.5]
-],
-[
-    [0.1, 0.2, 0.3],    # Heatmap for problem 2
-    [0.2, 0.3, 0.4],
-    [0.3, 0.4, 0.5]
-],
-[
-    [0.1, 0.2, 0.3],    # Heatmap for problem 3
-    [0.2, 0.3, 0.4],
-    [0.3, 0.4, 0.5]
-]])
-
+coordinates = np.random.rand(4, 20, 2) # 4 instances of 20 cities with 2 dimsional coordinates
+opt_solutions = np.array([np.random.permutation(20) for _ in range(4)]) # fake optimal solutions
+heatmaps = np.random.rand(4, 20, 20) # fake heatmaps
 
 concorde_distances, mcts_distances, gaps, times, overall_times, solutions, lengths_times = parallel_mcts_solve(
-    city_num=3,
+    city_num=20,
     coordinates_list=coordinates,
     opt_solutions=opt_solutions,
     heatmaps=heatmaps,
@@ -76,7 +39,7 @@ concorde_distances, mcts_distances, gaps, times, overall_times, solutions, lengt
     param_t=0.1,
     max_candidate_num=5,
     candidate_use_heatmap=1,
-    max_depth=100,
+    max_depth=10,
     log_len_time=True, # Record the length-time record during the MCTS search
     debug=False, # Print debug information
 )

@@ -82,5 +82,10 @@ void Local_Search_by_2Opt_Move()
         // *Best_All_Node
         Current_Instance_Best_Distance = Cur_Solution_Total_Distance;
         Store_Best_Solution();
+        if (Log_Length_Time)
+        {
+            Length_Time.push_back(
+                std::make_pair(Current_Instance_Best_Distance, Get_Elapsed_Time(Current_Instance_Begin_Time)));
+        }
     }
 }

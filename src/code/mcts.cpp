@@ -91,7 +91,7 @@ TSP_Result solve(int city_num, double alpha, double beta, double param_h, double
     auto solution_r = opt_solution.unchecked<1>();
     for (int i = 0; i < Virtual_City_Num; i++)
     {
-        Opt_Solution[i] = solution_r(i) - 1;
+        Opt_Solution[i] = solution_r(i);
     }
 
     auto heatmap_r = heatmap.unchecked<2>();

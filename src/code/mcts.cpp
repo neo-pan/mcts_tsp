@@ -39,6 +39,7 @@ TSP_Result solve(int city_num, double alpha, double beta, double param_h, double
     Candidate_Use_Heatmap = candidate_use_heatmap;
     Max_Depth = max_depth;
     Log_Length_Time = log_len_time;
+    MCTS_Debug = debug;
 
     if (debug)
     {

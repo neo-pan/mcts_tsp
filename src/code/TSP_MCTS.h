@@ -256,6 +256,15 @@ Distance_Type Simulation(int Max_Simulation_Times)
 // Execute the best action stored in City_Sequence[] with depth Pair_City_Num
 bool Execute_Best_Action()
 {
+    if (MCTS_Debug)
+    {
+        // print City_Sequence[]
+        cout << "City_Sequence: ";
+        for (int i = 0; i < 2 * Pair_City_Num; i++)
+        {
+            cout << City_Sequence[i] << " ";
+        }
+    }
     int Begin_City = City_Sequence[0];
     int Cur_City = City_Sequence[1];
     All_Node[Begin_City].Next_City = Null;
@@ -298,21 +307,29 @@ void MCTS()
     {
         Distance_Type Before_Simulation_Distance = Get_Solution_Total_Distance();
 
+        if (MCTS_Debug)
+            cout << "Simulation()" << endl;
         // Simulate a number of (controled by Param_H) actions
         Distance_Type Best_Delta = Simulation(Param_H * Virtual_City_Num);
 
         // Use the information of the best action to update the parameters
         // of MCTS by back propagation
+        if (MCTS_Debug)
+            cout << "Back_Propagation()" << endl;
         Back_Propagation(Before_Simulation_Distance, Best_Delta);
 
         if (Best_Delta > 0)
         {
             // Select the best action to execute
+            if (MCTS_Debug)
+                cout << "Execute_Best_Action()" << endl;
             Execute_Best_Action();
 
             // Store the best found solution to Struct_Node
             // *Best_All_Node
             Distance_Type Cur_Solution_Total_Distance = Get_Solution_Total_Distance();
+            if (MCTS_Debug)
+                cout << "Cur_Solution_Total_Distance: " << Cur_Solution_Total_Distance << endl;
             if (Cur_Solution_Total_Distance < Current_Instance_Best_Distance)
             {
                 Current_Instance_Best_Distance = Cur_Solution_Total_Distance;

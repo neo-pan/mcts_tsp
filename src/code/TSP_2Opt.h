@@ -73,7 +73,8 @@ void Local_Search_by_2Opt_Move()
 {
     while (Improve_By_2Opt_Move() == true)
         ;
-    // cout << "Improving by 2-opt move: " << endl;
+    if (MCTS_Debug)
+        cout << "Local search by 2-opt move finished." << endl;
 
     Distance_Type Cur_Solution_Total_Distance = Get_Solution_Total_Distance();
     if (Cur_Solution_Total_Distance < Current_Instance_Best_Distance)

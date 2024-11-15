@@ -29,6 +29,8 @@ thread_local int Candidate_Use_Heatmap = 1; // used to control whether to use th
 thread_local int Max_Depth = 10;            // used to control the depth of the search tree
 thread_local bool Log_Length_Time = false;  // used to control whether to log the length-time information
 
+thread_local bool MCTS_Debug = false;
+
 // #define Default_Random_Seed  (unsigned)time(NULL);
 #define Default_Random_Seed 489663920;
 unsigned Random_Seed = Default_Random_Seed;

@@ -67,6 +67,8 @@ int Temp_Choose_City_To_Connect(int Cur_City)
 
 bool Generate_Initial_Solution()
 {
+    if (MCTS_Debug)
+        cout << "Generate_Initial_Solution() begin" << endl;
     for (int i = 0; i < Virtual_City_Num; i++)
     {
         Solution[i] = Null;
@@ -89,9 +91,13 @@ bool Generate_Initial_Solution()
             If_City_Selected[Next_City] = true;
             Cur_City = Next_City;
         }
+        if (MCTS_Debug)
+            cout << "Cur_City: " << Cur_City << " " << endl;
     } while (Next_City != Null);
 
     Convert_Solution_To_All_Node();
+    if (MCTS_Debug)
+        cout << "Generate_Initial_Solution() end" << endl;
 
     if (Check_Solution_Feasible() == false)
     {

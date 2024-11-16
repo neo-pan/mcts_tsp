@@ -1,6 +1,5 @@
 import numpy as np
 from . import _mcts_cpp as mcts
-from typing import List
 from .mcts_types import TSP_Result
 
 def solve_one_instance(
@@ -18,6 +17,8 @@ def solve_one_instance(
     log_len_time: bool = False,
     debug: bool = False
 ) -> TSP_Result:
+    if (2 * max_depth > city_num):
+        raise ValueError("max_depth should be less than city_num/2")
     return mcts.solve(
         city_num,
         alpha,

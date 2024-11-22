@@ -87,12 +87,12 @@ bool Generate_Initial_Solution()
         Next_City = Temp_Choose_City_To_Connect(Cur_City);
         if (Next_City != Null)
         {
+            if (MCTS_Debug)
+                cout << "Initial_Solution_Cur_City: " << Cur_City << " " << endl;
             Solution[Selected_City_Num++] = Next_City;
             If_City_Selected[Next_City] = true;
             Cur_City = Next_City;
         }
-        if (MCTS_Debug)
-            cout << "Cur_City: " << Cur_City << " " << endl;
     } while (Next_City != Null);
 
     Convert_Solution_To_All_Node();

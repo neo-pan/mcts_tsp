@@ -5,9 +5,9 @@ int Get_Random_Int(int Divide_Num)
 }
 
 // Calculate the distance between two cities, rounded up to the nearest
-int Calculate_Int_Distance(int First_City, int Second_City)
+Distance_Type Calculate_Int_Distance(int First_City, int Second_City)
 {
-    return (int)(0.5 + sqrt((Coordinate_X[First_City] - Coordinate_X[Second_City]) *
+    return (Distance_Type)(0.5 + sqrt((Coordinate_X[First_City] - Coordinate_X[Second_City]) *
                                 (Coordinate_X[First_City] - Coordinate_X[Second_City]) +
                             (Coordinate_Y[First_City] - Coordinate_Y[Second_City]) *
                                 (Coordinate_Y[First_City] - Coordinate_Y[Second_City])));
@@ -333,6 +333,8 @@ void Store_Best_Solution()
         Best_All_Node[i].Salesman = All_Node[i].Salesman;
         Best_All_Node[i].Next_City = All_Node[i].Next_City;
         Best_All_Node[i].Pre_City = All_Node[i].Pre_City;
+        if (MCTS_Debug)
+            cout << "Store_Best_Solution" << All_Node[i].Pre_City << " " << i << " " << All_Node[i].Next_City << endl;
     }
 }
 
@@ -344,5 +346,7 @@ void Restore_Best_Solution()
         All_Node[i].Salesman = Best_All_Node[i].Salesman;
         All_Node[i].Next_City = Best_All_Node[i].Next_City;
         All_Node[i].Pre_City = Best_All_Node[i].Pre_City;
+        if (MCTS_Debug)
+            cout << "Restore_Best_Solution" << All_Node[i].Pre_City << " " << i << " " << All_Node[i].Next_City << endl;
     }
 }

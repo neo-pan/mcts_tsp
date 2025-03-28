@@ -3,7 +3,7 @@ requires = [
     "setuptools>=42",
     "pybind11>=2.10.0",
     "wheel",
-    "toml",
+    "tomli",
     "numpy",
 ]
 build-backend = "setuptools.build_meta"
@@ -26,9 +26,12 @@ version = "0.0.6"
 description = "A python wrapper for MCTS TSP solver"
 readme = "README.md"
 requires-python = ">=3.7"
-license = {file = "LICENSE"}
+license = "MIT"
 authors = [
   {name = "Xuanhao Pan", email = "xuanhaopan@link.cuhk.edu.cn"},
+]
+dependencies = [
+  "numpy",
 ]
 
 [project.urls]

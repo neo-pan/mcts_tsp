@@ -19,7 +19,8 @@ struct TSP_Result
 
 TSP_Result solve(int city_num, double alpha, double beta, double param_h, double param_t, int max_candidate_num,
                  int candidate_use_heatmap, int max_depth, py::array_t<double> coordinates,
-                 py::array_t<int> opt_solution, py::array_t<double> heatmap, bool log_len_time, bool debug)
+                 py::array_t<int> opt_solution, py::array_t<double> heatmap, py::array_t<int> knn_edges,
+                 bool log_len_time, bool debug)
 {
     auto Overall_Start = std::chrono::steady_clock::now();
     srand(Random_Seed);
@@ -102,6 +103,16 @@ TSP_Result solve(int city_num, double alpha, double beta, double param_h, double
             Edge_Heatmap[i][j] = heatmap_r(i, j);
         }
     }
+
+    auto knn_r = knn_edges.unchecked<2>();
+    auto k = knn_r.shape(1);
+    for (int i = 0; i < Virtual_City_Num; i++) {
+        KNN_Edge_List[i].resize(k);
+        for (int j = 0; j < k; j++) {
+            KNN_Edge_List[i][j] = knn_r(i, j);
+        }
+    }
+
     auto data_copy_end = std::chrono::steady_clock::now();
 
     py::gil_scoped_release release;
@@ -121,7 +132,7 @@ TSP_Result solve(int city_num, double alpha, double beta, double param_h, double
 
     Current_Instance_Begin_Time = std::chrono::steady_clock::now();
     Current_Instance_Best_Distance = Inf_Cost;
-
+    
     auto candidate_start = std::chrono::steady_clock::now();
     Identify_Candidate_Set();
     auto candidate_end = std::chrono::steady_clock::now();
@@ -195,7 +206,7 @@ PYBIND11_MODULE(_mcts_cpp, m)
     m.def("solve", &solve, "A function to solve TSP using MCTS", py::arg("city_num"), py::arg("alpha"), py::arg("beta"),
           py::arg("param_h"), py::arg("param_t"), py::arg("max_candidate_num"), py::arg("candidate_use_heatmap"),
           py::arg("max_depth"), py::arg("coordinates"), py::arg("opt_solution"), py::arg("heatmap"),
-          py::arg("log_len_time") = false, py::arg("debug") = false);
+          py::arg("knn_edges"), py::arg("log_len_time") = false, py::arg("debug") = false);
 
     py::class_<TSP_Result>(m, "TSP_Result")
         .def(py::init<>())

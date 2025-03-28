@@ -6,18 +6,20 @@ def generate_test_data(num_cities, num_instances):
     coordinates = np.random.rand(num_instances, num_cities, 2)
     opt_solutions = np.array([np.random.permutation(num_cities) + 1 for _ in range(num_instances)])
     heatmaps = np.random.rand(num_instances, num_cities, num_cities)
-    return coordinates, opt_solutions, heatmaps
+    knn_edges_list = np.random.randint(0, num_cities, size=(num_cities, num_instances, 10))
+    return coordinates, opt_solutions, heatmaps, knn_edges_list
 
 
-def test_parallel_mcts_solve(coordinates_list, opt_solutions, heatmaps, city_num, num_threads, debug=False, log_len_time=False):
+def test_parallel_mcts_solve(coordinates_list, opt_solutions, heatmaps, knn_edges_list, city_num, num_threads, debug=False, log_len_time=False):
     print("\nTesting parallel_mcts_solve:")
     start_time = time.time()
-    
+
     concorde_distances, mcts_distances, gaps, times, overall_times, solutions, lengths_times = mcts_tsp.parallel_mcts_solve(
         city_num=city_num,
         coordinates_list=coordinates_list,
         opt_solutions=opt_solutions,
         heatmaps=heatmaps,
+        knn_edges_list = knn_edges_list,
         num_threads=num_threads,
         alpha=1,
         beta=10,
@@ -54,13 +56,13 @@ def main():
     num_threads = 4
     
     # Generate test data
-    coordinates, opt_solutions, heatmaps = generate_test_data(num_cities, num_instances)
+    coordinates, opt_solutions, heatmaps, knn_edges_list = generate_test_data(num_cities, num_instances)
   
     # Test parallel_mcts_solve
-    parallel_results = test_parallel_mcts_solve(coordinates, opt_solutions, heatmaps, num_cities, num_threads, debug=True)
+    parallel_results = test_parallel_mcts_solve(coordinates, opt_solutions, heatmaps, knn_edges_list, num_cities, num_threads, debug=True)
 
     # Test log_len_time
-    parallel_results = test_parallel_mcts_solve(coordinates, opt_solutions, heatmaps, num_cities, num_threads, log_len_time=True)
+    parallel_results = test_parallel_mcts_solve(coordinates, opt_solutions, heatmaps, knn_edges_list, num_cities, num_threads, log_len_time=True)
     
     print("\nTest completed successfully!")
 

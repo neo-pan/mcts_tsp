@@ -1,10 +1,10 @@
 from pybind11.setup_helpers import Pybind11Extension, build_ext
 from setuptools import setup, find_packages
-import toml
+import tomli
 
 def get_version():
-    with open("pyproject.toml", "r") as f:
-        toml_data = toml.load(f)
+    with open("pyproject.toml", "rb") as f:
+        toml_data = tomli.load(f)
     
     return toml_data["project"]["version"]
 

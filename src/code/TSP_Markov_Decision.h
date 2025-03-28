@@ -1,3 +1,7 @@
+#ifndef TSP_MARKOV_DECISION_H
+#define TSP_MARKOV_DECISION_H
+
+#include "TSP_MCTS.h"
 
 // Jump to a new state by randomly generating a solution
 void Jump_To_Random_State()
@@ -31,3 +35,5 @@ Distance_Type Markov_Decision_Process()
     else
         return Inf_Cost;
 }
+
+#endif // TSP_MARKOV_DECISION_H

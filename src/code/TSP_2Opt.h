@@ -1,3 +1,8 @@
+#ifndef TSP_2OPT_H
+#define TSP_2OPT_H
+
+#include "TSP_Basic_Functions.h"
+
 // Evaluate the delta after applying a 2-opt move (delta >0 indicates an
 // improving solution)
 Distance_Type Get_2Opt_Delta(int First_City, int Second_City)
@@ -90,3 +95,5 @@ void Local_Search_by_2Opt_Move()
         }
     }
 }
+
+#endif // TSP_2OPT_H

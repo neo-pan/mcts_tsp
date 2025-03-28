@@ -1,3 +1,8 @@
+#ifndef TSP_BASIC_FUNCTIONS_H
+#define TSP_BASIC_FUNCTIONS_H
+
+#include "TSP_IO.h"
+
 // Return an integer between [0,Divide_Num)
 int Get_Random_Int(int Divide_Num)
 {
@@ -140,21 +145,6 @@ Distance_Type Get_Solution_Total_Distance()
     return Solution_Total_Distance;
 }
 
-// For TSP20-50-100 instances
-//  Return the total distance (double) of the solution stored in
-//  Stored_Opt_Solution[Inst_Index] double
-//  Get_Stored_Solution_Double_Distance(int Inst_Index)
-//  {
-//      double Stored_Solution_Double_Distance = 0;
-//      for(int i=0; i<Virtual_City_Num-1; i++)
-//          Stored_Solution_Double_Distance +=
-//          DoubleDistance[Stored_Opt_Solution[Inst_Index][i]][Stored_Opt_Solution[Inst_Index][i+1]];
-
-//     Stored_Solution_Double_Distance +=
-//     DoubleDistance[Stored_Opt_Solution[Inst_Index][Virtual_City_Num-1]][Stored_Opt_Solution[Inst_Index][0]];
-//     return Stored_Solution_Double_Distance;
-// }
-
 double Get_Stored_Solution_Double_Distance()
 {
     double Stored_Solution_Double_Distance = 0;
@@ -253,48 +243,6 @@ void Identify_Candidate_Set()
     }
 }
 
-// // Return the unselected city neareast to Cur_City
-// int Get_Neareast_Unselected_City(int Cur_City)
-// {
-// 	printf("USING UTSP VERSION");
-// 	int Neareast_Unselected_City=Null;
-// 	for(int i=0;i<Virtual_City_Num;i++)
-// 	{
-// 		if (i==Cur_City || If_City_Selected[i] ||
-// Get_Distance(Cur_City,i) >= Inf_Cost) 			continue;
-
-// 		if(Neareast_Unselected_City == Null || Get_Distance(Cur_City,i)
-// < Get_Distance(Cur_City,Neareast_Unselected_City))
-// 			Neareast_Unselected_City=i;
-// 	}
-
-// 	return Neareast_Unselected_City;
-// }
-
-// // Identify a set of candidate neighbors for each city, stored in
-// Candidate_Num[] and Candidate[][] void Identify_Candidate_Set()
-// {
-// 	printf("USING UTSP VERSION");
-// 	for(int i=0;i<Virtual_City_Num;i++)
-// 	{
-// 		Candidate_Num[i]=0;
-
-// 		for(int j=0;j<Virtual_City_Num;j++)
-// 			If_City_Selected[j]=false;
-
-// 		for(int j=0;j<Max_Candidate_Num;j++)
-// 		{
-// 			int
-// Neareast_Unselected_City=Get_Neareast_Unselected_City(i);
-// 			if(Neareast_Unselected_City != Null)
-// 			{
-// 				Candidate[i][Candidate_Num[i]++]=Neareast_Unselected_City;
-// 				If_City_Selected[Neareast_Unselected_City]=true;
-// 			}
-// 	    }
-// 	}
-// }
-
 bool Check_If_Two_City_Same_Or_Adjacent(int First_City, int Second_City)
 {
     if (First_City == Second_City || All_Node[First_City].Next_City == Second_City ||
@@ -333,8 +281,8 @@ void Store_Best_Solution()
         Best_All_Node[i].Salesman = All_Node[i].Salesman;
         Best_All_Node[i].Next_City = All_Node[i].Next_City;
         Best_All_Node[i].Pre_City = All_Node[i].Pre_City;
-        if (MCTS_Debug)
-            cout << "Store_Best_Solution" << All_Node[i].Pre_City << " " << i << " " << All_Node[i].Next_City << endl;
+        // if (MCTS_Debug)
+        //     cout << "Store_Best_Solution" << All_Node[i].Pre_City << " " << i << " " << All_Node[i].Next_City << endl;
     }
 }
 
@@ -346,7 +294,9 @@ void Restore_Best_Solution()
         All_Node[i].Salesman = Best_All_Node[i].Salesman;
         All_Node[i].Next_City = Best_All_Node[i].Next_City;
         All_Node[i].Pre_City = Best_All_Node[i].Pre_City;
-        if (MCTS_Debug)
-            cout << "Restore_Best_Solution" << All_Node[i].Pre_City << " " << i << " " << All_Node[i].Next_City << endl;
+        // if (MCTS_Debug)
+        //     cout << "Restore_Best_Solution" << All_Node[i].Pre_City << " " << i << " " << All_Node[i].Next_City << endl;
     }
 }
+
+#endif // TSP_BASIC_FUNCTIONS_H

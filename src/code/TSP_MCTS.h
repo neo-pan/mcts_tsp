@@ -1,3 +1,10 @@
+#ifndef TSP_MCTS_H
+#define TSP_MCTS_H
+
+#include "TSP_Basic_Functions.h"
+#include "TSP_Init.h"
+#include "TSP_2Opt.h"
+
 // Initialize the parameters used in MCTS
 void MCTS_Init()
 {
@@ -346,3 +353,5 @@ void MCTS()
                    // among the sampling pool
     }
 }
+
+#endif // TSP_MCTS_H

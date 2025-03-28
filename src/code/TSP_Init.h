@@ -1,3 +1,8 @@
+#ifndef TSP_INIT_H
+#define TSP_INIT_H
+
+#include "TSP_Basic_Functions.h"
+
 // Estimate the potential of each edge by upper bound confidence function
 float Temp_Get_Potential(int First_City, int Second_City)
 {
@@ -87,8 +92,8 @@ bool Generate_Initial_Solution()
         Next_City = Temp_Choose_City_To_Connect(Cur_City);
         if (Next_City != Null)
         {
-            if (MCTS_Debug)
-                cout << "Initial_Solution_Cur_City: " << Cur_City << " " << endl;
+            // if (MCTS_Debug)
+            //     cout << "Initial_Solution_Cur_City: " << Cur_City << " " << endl;
             Solution[Selected_City_Num++] = Next_City;
             If_City_Selected[Next_City] = true;
             Cur_City = Next_City;
@@ -109,44 +114,4 @@ bool Generate_Initial_Solution()
     return true;
 }
 
-// int Select_Random_City(int Cur_City)
-// {
-// 	int Random_Index=Get_Random_Int(Virtual_City_Num);
-// 	for(int i=0;i<Virtual_City_Num;i++)
-// 	{
-// 		int Candidate_City=(Random_Index+i)%Virtual_City_Num;
-// 		if(!If_City_Selected[Candidate_City])
-// 			return Candidate_City;
-// 	}
-
-// 	return Null;
-// }
-
-// bool Generate_Initial_Solution()
-// {
-// 	for(int i=0;i<Virtual_City_Num;i++)
-// 	{
-// 		Solution[i]=Null;
-// 		If_City_Selected[i]=false;
-// 	}
-
-// 	int Selected_City_Num=0;
-// 	int Cur_City=Start_City;
-// 	int Next_City;
-
-// 	Solution[Selected_City_Num++]=Cur_City;
-// 	If_City_Selected[Cur_City]=true;
-// 	do
-// 	{
-// 		Next_City=Select_Random_City(Cur_City);
-// 		if(Next_City != Null)
-// 		{
-// 			Solution[Selected_City_Num++]=Next_City;
-// 			If_City_Selected[Next_City]=true;
-// 			Cur_City = Next_City;
-// 		}
-// 	}while(Next_City != Null);
-
-// 	Convert_Solution_To_All_Node();
-// 	return Check_Solution_Feasible();
-// }
+#endif // TSP_INIT_H

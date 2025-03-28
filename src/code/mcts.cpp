@@ -2,11 +2,6 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 
-#include "TSP_IO.h"
-#include "TSP_Basic_Functions.h"
-#include "TSP_2Opt.h"
-#include "TSP_Init.h"
-#include "TSP_MCTS.h"
 #include "TSP_Markov_Decision.h"
 
 namespace py = pybind11;
@@ -59,7 +54,10 @@ TSP_Result solve(int city_num, double alpha, double beta, double param_h, double
     Salesman_Num = 1;
     Virtual_City_Num = City_Num + Salesman_Num - 1;
 
+    auto memory_start = std::chrono::steady_clock::now();
     Allocate_Memory(Virtual_City_Num);
+    auto memory_end = std::chrono::steady_clock::now();
+    
     // Assert that distances has the correct shape
     auto coordinates_shape = coordinates.shape();
     auto solution_shape = opt_solution.shape();
@@ -82,6 +80,7 @@ TSP_Result solve(int city_num, double alpha, double beta, double param_h, double
     }
 
     // Fill in the matrix
+    auto data_copy_start = std::chrono::steady_clock::now();
     auto coordinates_r = coordinates.unchecked<2>();
     for (int i = 0; i < Virtual_City_Num; i++)
     {
@@ -103,10 +102,14 @@ TSP_Result solve(int city_num, double alpha, double beta, double param_h, double
             Edge_Heatmap[i][j] = heatmap_r(i, j);
         }
     }
+    auto data_copy_end = std::chrono::steady_clock::now();
 
     py::gil_scoped_release release;
 
+    auto dist_calc_start = std::chrono::steady_clock::now();
     Calculate_All_Pair_Distance();
+    auto dist_calc_end = std::chrono::steady_clock::now();
+    
     for (int i = 0; i < City_Num; i++)
     {
         for (int j = i + 1; j < City_Num; j++)
@@ -119,8 +122,13 @@ TSP_Result solve(int city_num, double alpha, double beta, double param_h, double
     Current_Instance_Begin_Time = std::chrono::steady_clock::now();
     Current_Instance_Best_Distance = Inf_Cost;
 
+    auto candidate_start = std::chrono::steady_clock::now();
     Identify_Candidate_Set();
+    auto candidate_end = std::chrono::steady_clock::now();
+
+    auto mdp_start = std::chrono::steady_clock::now();
     Markov_Decision_Process();
+    auto mdp_end = std::chrono::steady_clock::now();
 
     double Stored_Solution_Double_Distance = Get_Stored_Solution_Double_Distance();
     double Current_Solution_Double_Distance = Get_Current_Solution_Double_Distance();
@@ -153,6 +161,7 @@ TSP_Result solve(int city_num, double alpha, double beta, double param_h, double
         std::cout << "Gap: " << Gap * 100 << "%" << std::endl;
         std::cout << "Time: " << Time << " seconds" << std::endl;
         std::cout << "Overall_Time: " << Overall_Time << " seconds" << std::endl;
+        
         std::cout << "Solution: ";
         for (int i = 0; i < Solution.size(); ++i)
         {
@@ -163,6 +172,14 @@ TSP_Result solve(int city_num, double alpha, double beta, double param_h, double
             std::cout << "Length: " << pair.first << " Time: " << pair.second << std::endl;
         }
         std::cout << std::endl;
+        
+        // Print timing for each part
+        std::cout << "--- Timing Breakdown ---" << std::endl;
+        std::cout << "Allocate_Memory: " << std::chrono::duration<double>(memory_end - memory_start).count() << " seconds" << std::endl;
+        std::cout << "Data Copy: " << std::chrono::duration<double>(data_copy_end - data_copy_start).count() << " seconds" << std::endl;
+        std::cout << "Calculate_All_Pair_Distance: " << std::chrono::duration<double>(dist_calc_end - dist_calc_start).count() << " seconds" << std::endl;
+        std::cout << "Identify_Candidate_Set: " << std::chrono::duration<double>(candidate_end - candidate_start).count() << " seconds" << std::endl;
+        std::cout << "Markov_Decision_Process: " << std::chrono::duration<double>(mdp_end - mdp_start).count() << " seconds" << std::endl;
     }
 
     Release_Memory(Virtual_City_Num);

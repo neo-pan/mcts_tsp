@@ -114,4 +114,115 @@ bool Generate_Initial_Solution()
     return true;
 }
 
+// Generates an initial solution using the random insertion method
+bool Generate_Initial_Solution_Random_Insert()
+{
+    if (MCTS_Debug)
+        cout << "Generate_Initial_Solution_Random_Insert() begin" << endl;
+    
+    // Reset solution and city selection markers
+    for (int i = 0; i < Virtual_City_Num; i++)
+    {
+        Solution[i] = Null;
+        If_City_Selected[i] = false;
+    }
+    
+    // Start with Start_City
+    Solution[0] = Start_City;
+    If_City_Selected[Start_City] = true;
+    
+    // Find a second city (could be random, but using closest city for better results)
+    int second_city = Null;
+    Distance_Type min_dist = Inf_Cost;
+    for (int i = 0; i < Virtual_City_Num; i++)
+    {
+        if (i != Start_City && Distance[Start_City][i] < min_dist)
+        {
+            min_dist = Distance[Start_City][i];
+            second_city = i;
+        }
+    }
+    
+    // Add second city to form initial subtour
+    Solution[1] = second_city;
+    If_City_Selected[second_city] = true;
+    int current_tour_size = 2;
+    
+    // Random insertion for each remaining city
+    for (int i = 2; i < Virtual_City_Num; i++)
+    {
+        // Select a random unvisited city
+        Promising_City_Num = 0;
+        for (int j = 0; j < Virtual_City_Num; j++)
+        {
+            if (!If_City_Selected[j])
+                Promising_City[Promising_City_Num++] = j;
+        }
+        
+        if (Promising_City_Num == 0)
+            break;  // No more cities to insert
+        
+        int random_index = Get_Random_Int(Promising_City_Num);
+        int next_city = Promising_City[random_index];
+        
+        // Find the best position to insert the new city
+        int best_pos = -1;
+        Distance_Type min_increase = Inf_Cost;
+        
+        for (int pos = 0; pos < current_tour_size; pos++)
+        {
+            int prev = Solution[pos];
+            int next;
+            if (pos == current_tour_size - 1)
+                next = Solution[0]; // Close the loop for the last position
+            else
+                next = Solution[pos + 1];
+            
+            // Calculate increase in tour length if we insert next_city between prev and next
+            Distance_Type increase = Distance[prev][next_city] + Distance[next_city][next] - Distance[prev][next];
+            
+            if (increase < min_increase)
+            {
+                min_increase = increase;
+                best_pos = pos;
+            }
+        }
+        
+        // Insert the city at the best position
+        if (best_pos == current_tour_size - 1)
+        {
+            // Insert at the end
+            Solution[current_tour_size] = next_city;
+        }
+        else
+        {
+            // Shift cities to make room
+            for (int j = current_tour_size; j > best_pos + 1; j--)
+            {
+                Solution[j] = Solution[j - 1];
+            }
+            Solution[best_pos + 1] = next_city;
+        }
+        
+        If_City_Selected[next_city] = true;
+        current_tour_size++;
+    }
+    
+    // Convert the solution to the linked structure
+    Convert_Solution_To_All_Node();
+    
+    if (MCTS_Debug)
+        cout << "Generate_Initial_Solution_Random_Insert() end" << endl;
+    
+    // Verify solution
+    if (Check_Solution_Feasible() == false)
+    {
+        cout << "\nError! The constructed solution is unfeasible" << endl;
+        getchar();
+        return false;
+    }
+    
+    return true;
+}
+
 #endif // TSP_INIT_H

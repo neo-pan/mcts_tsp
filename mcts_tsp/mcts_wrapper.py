@@ -3,9 +3,6 @@ from . import _mcts_cpp as mcts
 from .mcts_types import TSP_Result
 
 def solve_one_instance(
-    coordinates: np.ndarray,
-    opt_solution: np.ndarray,
-    heatmap: np.ndarray,
     city_num: int,
     alpha: float,
     beta: float,
@@ -14,6 +11,10 @@ def solve_one_instance(
     max_candidate_num: int,
     candidate_use_heatmap: int,
     max_depth: int,
+    coordinates: np.ndarray,
+    opt_solution: np.ndarray,
+    heatmap: np.ndarray,
+    knn_edges: np.ndarray,
     log_len_time: bool = False,
     debug: bool = False
 ) -> TSP_Result:
@@ -31,6 +32,7 @@ def solve_one_instance(
         coordinates,
         opt_solution,
         heatmap,
+        knn_edges,
         log_len_time,
         debug
     )

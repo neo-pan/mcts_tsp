@@ -50,6 +50,7 @@ thread_local double *Coordinate_X;
 thread_local double *Coordinate_Y;
 thread_local Distance_Type **Distance;
 thread_local int *Opt_Solution;
+thread_local vector<vector<int>> KNN_Edge_List; // Store the KNN edge list for each city
 
 // Store the length-time information
 thread_local vector<std::pair<double, double>> Length_Time;
@@ -108,6 +109,8 @@ void Allocate_Memory(int City_Num)
 
     Opt_Solution = new int[City_Num];
 
+    KNN_Edge_List.resize(City_Num);
+
     All_Node = new Struct_Node[City_Num];
     Best_All_Node = new Struct_Node[City_Num];
     Solution = new int[City_Num];
@@ -146,6 +149,8 @@ void Release_Memory(int City_Num)
     delete[] Distance;
 
     delete[] Opt_Solution;
+
+    KNN_Edge_List.clear();
 
     delete[] All_Node;
     delete[] Best_All_Node;
